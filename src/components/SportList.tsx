@@ -22,7 +22,7 @@ export function SportsList({ sports }: { sports: Sport[] }) {
             <tr key={sport.sport_id} className="hover:bg-gray-50">
               <td className="p-2 border-b">{sport.sport_id}</td>
               <td className="p-2 border-b">{sport.sport_name}</td>
-              <td className="p-2 border-b">{sport.category_id}</td>
+              <td className="p-2 border-b">{sport.sport_category.value}</td>
               <td className="p-2 border-b">
                 {sport.is_team_sport ? "Yes" : "No"}
               </td>

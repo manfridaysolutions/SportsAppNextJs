@@ -33,7 +33,7 @@ export function SportsTable({ sports }: { sports: Sport[] }) {
             <TableRow key={sport.sport_id}>
               <TableCell>{sport.sport_id}</TableCell>
               <TableCell className="font-medium">{sport.sport_name}</TableCell>
-              <TableCell>{sport.category_id}</TableCell>
+              <TableCell>{sport.sport_category.value}</TableCell>
               <TableCell>
                 {sport.is_team_sport ? "Yes" : "No"}
               </TableCell>
