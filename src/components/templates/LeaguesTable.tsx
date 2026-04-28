@@ -21,6 +21,7 @@ import { Input } from "../ui/input";
 import { EditableRow } from "../organisms/EditableRow";
 import { EditableCell } from "../organisms/EditableCell";
 import { CreateRow } from "../organisms/CreateRow";
+import { AddButton } from "../atoms/ActionButtons";
 import { useState } from "react";
 
 export function LeaguesTable({
@@ -48,12 +49,9 @@ export function LeaguesTable({
 
     return (
         <div className="w-full overflow-x-auto p-4">
-            <button
-                className="mb-4 px-4 py-2 bg-primary text-white rounded"
-                onClick={() => setCreating(true)}
-            >
-                + Add League
-            </button>
+            <AddButton onClick={() => setCreating(true)}>
+              Add League
+            </AddButton>
             <Table>
                 <TableCaption>A list of all leagues in the system</TableCaption>
                 <TableHeader>

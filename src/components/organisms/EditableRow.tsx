@@ -4,6 +4,7 @@ import { useState } from "react";
 import { TableRow, TableCell } from "../ui/table";
 import { apiSave } from "@/lib/api";
 import { RowActions } from "../molecules/RowActions";
+import { EditButton } from "../atoms/ActionButtons";
 
 interface EditableRowProps<T> {
   record: T;
@@ -82,12 +83,7 @@ export function EditableRow<T extends object>({
             isSaving={saving} 
           />
         ) : (
-          <button 
-            onClick={() => setIsEditing(true)}
-            className="text-sm font-medium text-blue-600 hover:underline"
-          >
-            Edit
-          </button>
+          <EditButton onClick={() => setIsEditing(true)} />
         )}
       </TableCell>
     </TableRow>
