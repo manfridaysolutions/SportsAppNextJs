@@ -1,5 +1,7 @@
 "use client";
 
+import { RowActions } from "../molecules/RowActions";
+
 import { useState } from "react";
 import { TableRow, TableCell } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
@@ -111,22 +113,12 @@ export function CreateRow({
             )}
           </TableCell>
         ))}
-
-      <TableCell className="flex gap-2">
-        <button
-          className="px-3 py-1 bg-green-600 text-white rounded"
-          onClick={save}
-          disabled={saving}
-        >
-          {saving ? "Saving..." : "Save"}
-        </button>
-
-        <button
-          className="px-3 py-1 bg-gray-400 text-white rounded"
-          onClick={onCancel}
-        >
-          Cancel
-        </button>
+      <TableCell>
+        <RowActions 
+          onSave={save} 
+          onCancel={onCancel} 
+          isSaving={saving} 
+        />
       </TableCell>
     </TableRow>
   );

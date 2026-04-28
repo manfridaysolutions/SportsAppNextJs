@@ -2,8 +2,8 @@
 
 import { useReferenceValues } from "@/hooks/useReferenceValues";
 
-import { SportsTable } from "@/components/organisms/SportsTable";
-import { LeaguesTable } from "@/components/organisms/LeaguesTable";
+import { SportsTable } from "@/components/templates/SportsTable";
+import { LeaguesTable } from "@/components/templates/LeaguesTable";
 import { apiGet } from "@/lib/api";
 import { Sport } from "@/types/sport";
 import { League } from "@/types/league";

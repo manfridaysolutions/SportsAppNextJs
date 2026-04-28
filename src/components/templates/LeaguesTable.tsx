@@ -18,9 +18,9 @@ import {
     SelectValue,
 } from "../ui/select";
 import { Input } from "../ui/input";
-import { EditableRow } from "../molecules/EditableRow";
-import { EditableCell } from "../molecules/EditableCell";
-import { CreateRow } from "../molecules/CreateRow";
+import { EditableRow } from "../organisms/EditableRow";
+import { EditableCell } from "../organisms/EditableCell";
+import { CreateRow } from "../organisms/CreateRow";
 import { useState } from "react";
 
 export function LeaguesTable({
