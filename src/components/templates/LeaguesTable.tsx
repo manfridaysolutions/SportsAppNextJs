@@ -49,9 +49,6 @@ export function LeaguesTable({
 
     return (
         <div className="w-full overflow-x-auto p-4">
-            <AddButton onClick={() => setCreating(true)}>
-              Add League
-            </AddButton>
             <Table>
                 <TableCaption>A list of all leagues in the system</TableCaption>
                 <TableHeader>
@@ -60,6 +57,14 @@ export function LeaguesTable({
                         <TableHead>Name</TableHead>
                         <TableHead>Level</TableHead>
                         <TableHead>Country</TableHead>
+                        {/* ⭐ Add Button moved here */}
+                        <TableHead className="text-right">
+                            <AddButton 
+                                label=" " 
+                                onClick={() => setCreating(true)}
+                                className="mb-0 py-1 px-3 text-xs inline-flex" 
+                            />
+                        </TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
