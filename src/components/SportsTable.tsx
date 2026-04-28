@@ -11,7 +11,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-export function SportsTable({ sports }: { sports: Sport[] }) {
+// Update the props interface to include the selection logic
+interface SportsTableProps {
+  sports: Sport[];
+  selectedId: number | null;
+  onSelectSport: (id: number) => void;
+}
+
+export function SportsTable({ sports, selectedId, onSelectSport }: SportsTableProps) {
   return (
     <div className="w-full overflow-x-auto p-4">
       <Table>
@@ -30,7 +37,16 @@ export function SportsTable({ sports }: { sports: Sport[] }) {
 
         <TableBody>
           {sports.map((sport) => (
-            <TableRow key={sport.sport_id}>
+            <TableRow key={sport.sport_id}
+            // 1. Capture the click
+              onClick={() => onSelectSport(sport.sport_id)}
+              // 2. Add visual feedback (cursor and highlight)
+              className={`cursor-pointer transition-colors ${
+                selectedId === sport.sport_id 
+                  ? "bg-muted font-medium hover:bg-muted" 
+                  : "hover:bg-muted/50"
+              }`}
+            >
               <TableCell>{sport.sport_id}</TableCell>
               <TableCell className="font-medium">{sport.sport_name}</TableCell>
               <TableCell>{sport.sport_category.value}</TableCell>
