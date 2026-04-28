@@ -2,8 +2,8 @@
 
 import { useReferenceValues } from "@/hooks/useReferenceValues";
 
-import { SportsTable } from "@/components/SportsTable";
-import { LeaguesTable } from "@/components/LeaguesTable";
+import { SportsTable } from "@/components/organisms/SportsTable";
+import { LeaguesTable } from "@/components/organisms/LeaguesTable";
 import { apiGet } from "@/lib/api";
 import { Sport } from "@/types/sport";
 import { League } from "@/types/league";
@@ -87,7 +87,9 @@ export default function SportsPage() {
       <LeaguesTable
         referenceData={referenceData}
         leagues={filteredLeagues}
-        onRefresh={fetchLeagues} />
+        onRefresh={fetchLeagues} 
+        selectedSportId={selectedSportId} // NEW: pass selectedSportId to LeaguesTable
+        />
     </div>
   );
 }

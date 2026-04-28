@@ -1,4 +1,3 @@
-// components/EditableRow.tsx
 "use client";
 
 import { useState } from "react";
@@ -11,47 +10,38 @@ interface EditableRowProps<T> {
   endpoint: string;
   onRefresh: () => void;
   children: (
-    data: T, 
-    update: (field: keyof T, value: any) => void
+    data: T,
+    update: (field: keyof T, value: any) => void,
+    isEditing: boolean // Add this to the render prop
   ) => React.ReactNode;
 }
 
-export function EditableRow<T extends object>({ 
-  record, idField, endpoint, onRefresh, children 
+export function EditableRow<T extends object>({
+  record, idField, endpoint, onRefresh, children
 }: EditableRowProps<T>) {
   const [buffer, setBuffer] = useState<Partial<T>>({});
+  const [isEditing, setIsEditing] = useState(false); // Track if this row is active
   const id = record[idField] as number;
 
   const handleBlur = async (e: React.FocusEvent) => {
     // Detect if we left the entire row
     if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+      setIsEditing(false); // Disable edit mode when clicking outside
+
       if (Object.keys(buffer).length > 0) {
         try {
-          // 1. Merge the record and the unsaved changes
           const fullData = { ...record, ...buffer };
-
-          // 2. Generic Filter: Remove nested objects and the primary key
           const payload = Object.keys(fullData).reduce((acc, key) => {
             const value = fullData[key as keyof T];
-          
-            // Only include the field if:
-            // - It's NOT the primary ID field
-            // - It's NOT a nested object/array (relationships)
-            if (
-                key !== idField && 
-                typeof value !== 'object' && 
-                value !== null
-            ) {
-                acc[key as keyof T] = value;
+            if (key !== idField && typeof value !== 'object' && value !== null) {
+              acc[key as keyof T] = value;
             }
             return acc;
-            }, {} as Partial<T>);
+          }, {} as Partial<T>);
 
-            // 3. Send only the flat fields (e.g., league_name, level, sport_id)
-            await apiSave(`${endpoint}${id}`, "PUT", payload);
-        
-            setBuffer({});
-            onRefresh();
+          await apiSave(`${endpoint}${id}`, "PUT", payload);
+          setBuffer({});
+          onRefresh();
         } catch (error) {
           console.error("Auto-save failed", error);
         }
@@ -64,8 +54,12 @@ export function EditableRow<T extends object>({
   };
 
   return (
-    <TableRow onBlur={handleBlur}>
-      {children(record, updateField)}
+    <TableRow
+      onBlur={handleBlur}
+      onClick={() => setIsEditing(true)} // Enable on click
+      className={isEditing ? "" : "cursor-pointer hover:bg-muted/50"}
+    >
+      {children(record, updateField, isEditing)}
     </TableRow>
   );
 }
