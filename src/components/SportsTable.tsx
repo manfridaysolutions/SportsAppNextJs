@@ -13,12 +13,15 @@ import {
 
 // Update the props interface to include the selection logic
 interface SportsTableProps {
+  referenceData: Record<string, any[]>; // Add this line to receive reference data
   sports: Sport[];
   selectedId: number | null;
   onSelectSport: (id: number) => void;
 }
 
-export function SportsTable({ sports, selectedId, onSelectSport }: SportsTableProps) {
+export function SportsTable({ referenceData, sports, selectedId, onSelectSport }: SportsTableProps) {
+
+
   return (
     <div className="w-full overflow-x-auto p-4">
       <Table>

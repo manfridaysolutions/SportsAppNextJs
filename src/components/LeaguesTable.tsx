@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { League } from "@/types/league";
 import {
     Table,
@@ -11,11 +10,33 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import {
+    Select,
+    SelectTrigger,
+    SelectContent,
+    SelectItem,
+    SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { EditableRow } from "@/components/EditableRow";
-import { on } from "events";
 
-export function LeaguesTable({ leagues, onRefresh }: { leagues: any[], onRefresh: () => void}) {
+export function LeaguesTable({
+    referenceData,
+    leagues,
+    onRefresh,
+}: {
+    referenceData: Record<string, any[]>;
+    leagues: any[];
+    onRefresh: () => void;
+}) {
+    // Guard: referenceData may be undefined on first render
+    if (!referenceData) {
+        return <div>Loading reference data…</div>;
+    }
+
+    // Safe access
+    const countries = referenceData["Country"] ?? [];
+
     return (
         <div className="w-full overflow-x-auto p-4">
             <Table>
@@ -24,7 +45,6 @@ export function LeaguesTable({ leagues, onRefresh }: { leagues: any[], onRefresh
                     <TableRow>
                         <TableHead className="w-[60px]">ID</TableHead>
                         <TableHead>Name</TableHead>
-                        <TableHead>Sport ID</TableHead>
                         <TableHead>Level</TableHead>
                         <TableHead>Country</TableHead>
                     </TableRow>
@@ -41,11 +61,42 @@ export function LeaguesTable({ leagues, onRefresh }: { leagues: any[], onRefresh
                                 <>
                                     <TableCell>{league.league_id}</TableCell>
                                     <TableCell>
-                                        <Input defaultValue={data.league_name} onChange={(e) => update("league_name", e.target.value)} />
+                                        <Input 
+                                            defaultValue={data.league_name} 
+                                            onChange={(e) => update("league_name", e.target.value)} 
+                                        />
                                     </TableCell>
-                                    <TableCell>{league.sport_id}</TableCell>
-                                    <TableCell>{league.level}</TableCell>
-                                    <TableCell>{league.country.value}</TableCell>
+                                    <TableCell className="w-[100px]">
+                                        <Input 
+                                            type="number" step="1" min="1"
+                                            defaultValue={data.level}
+                                            onChange={(e) => update("level", e.target.value)}
+                                        />
+                                    </TableCell>
+                                    <TableCell>
+                                        <Select
+                                            value={String(data.country_id ?? "")}
+                                            onValueChange={(newValue) => {
+                                                // This is where you call your FastAPI update endpoint
+                                                update("country_id", newValue === "" ? null : Number(newValue));
+                                            }}
+                                        >
+                                            <SelectTrigger className="w-[180px]">
+                                                <SelectValue placeholder="Select country" />
+                                            </SelectTrigger>
+
+                                            <SelectContent>
+                                                {countries.map((c) => (
+                                                    <SelectItem
+                                                        key={c.reference_value_id}
+                                                        value={String(c.reference_value_id)}
+                                                    >
+                                                        {c.value}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </TableCell>
                                 </>
                             )}
                         </EditableRow>
