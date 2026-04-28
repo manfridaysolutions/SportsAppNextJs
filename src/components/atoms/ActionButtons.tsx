@@ -12,7 +12,10 @@ interface ActionButtonProps {
 
 export const EditButton = ({ onClick, children = "Edit" }: ActionButtonProps) => (
   <button
-    onClick={onClick}
+    onClick={(e) => {
+      e.stopPropagation(); // This prevents the TableRow onClick from firing
+      onClick();
+    }}
     className="text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
   >
     {children}

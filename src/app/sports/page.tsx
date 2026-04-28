@@ -26,10 +26,12 @@ export default function SportsPage() {
 
   // --- REFRESH LOGIC FOR LEAGUES ---
   const fetchLeagues = useCallback(async (id: number | null) => {
-    if (!id) {
+    // Use a strict null/undefined check
+    if (id === null || id === undefined) {
       setLeagues([]);
       return;
     }
+
     try {
       const data = await apiGet<League[]>(`/api/v1/league/?sport_id=${id}`);
       setLeagues(data);
@@ -64,21 +66,21 @@ export default function SportsPage() {
   return (
     <div className="min-h-screen p-6 bg-background text-foreground transition-colors duration-300">
       <h1 className="text-2xl font-semibold mb-4 tracking-tight">Sports</h1>
-      
-      <SportsTable 
+
+      <SportsTable
         referenceData={referenceData}
-        sports={sports_get} 
-        onSelectSport={(id) => setSelectedSportId(id)} 
+        sports={sports_get}
+        onSelectSport={(id) => setSelectedSportId(id)}
         selectedId={selectedSportId}
         onRefresh={fetchSports} // 👈 Passed to SportsTable for Edit/Create success
       />
 
       <h1 className="text-2xl font-semibold mt-8 mb-4 tracking-tight">Leagues</h1>
-      
+
       <LeaguesTable
         referenceData={referenceData}
         leagues={leagues_get}
-        onRefresh={() => fetchLeagues(selectedSportId)} 
+        onRefresh={() => fetchLeagues(selectedSportId)}
         selectedSportId={selectedSportId}
       />
     </div>

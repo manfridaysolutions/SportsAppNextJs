@@ -11,6 +11,8 @@ interface EditableRowProps<T> {
   idField: keyof T;
   endpoint: string;
   onRefresh: () => void;
+  onClick?: () => void; // Optional click handler for row selection
+  className?: string; // Optional additional support selection styling
   children: (
     data: T,
     update: (field: keyof T, value: any) => void,
@@ -19,7 +21,13 @@ interface EditableRowProps<T> {
 }
 
 export function EditableRow<T extends object>({
-  record, idField, endpoint, onRefresh, children
+  record, 
+  idField, 
+  endpoint, 
+  onRefresh, 
+  onClick, 
+  className, 
+  children
 }: EditableRowProps<T>) {
   const [buffer, setBuffer] = useState<Partial<T>>({});
   const [isEditing, setIsEditing] = useState(false);
@@ -69,6 +77,7 @@ export function EditableRow<T extends object>({
 
   return (
     <TableRow
+      onClick={onClick}
       className={isEditing ? "bg-muted/30" : "hover:bg-muted/50 transition-colors"}
     >
       {/* 1. Render the fields passed via children */}
