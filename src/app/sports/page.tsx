@@ -54,7 +54,7 @@ export default function SportsPage() {
     fetchLeagues(selectedSportId);
   }, [selectedSportId, fetchLeagues]);
 
-  const { data } = useReferenceValues(["AssetType", "TradeStatus", "Country"]);
+  const { data } = useReferenceValues(["SportCategory", "Country"]);
 
   const referenceData = (data as unknown as any[])?.reduce((acc, category) => {
     acc[category.name] = category.reference_values;

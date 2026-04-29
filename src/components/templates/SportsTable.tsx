@@ -42,7 +42,7 @@ export function SportsTable({
   if (!referenceData) return <div>Loading reference data...</div>;
 
   // Pulling options for categories if you have them in referenceData
-  const categories = referenceData["SportCategory"] ?? [];
+  const sport_categories = referenceData["SportCategory"] ?? [];
 
   return (
     <div className="w-full overflow-x-auto p-4">
@@ -75,15 +75,28 @@ export function SportsTable({
               }}
               onCancel={() => setCreating(false)}
               fields={[
-                { key: "name", label: "Name", type: "text" },
+                { key: "sport_name", label: "Name", type: "text" },
                 {
-                  key: "category",
+                  key: "category_id",
                   label: "Category",
                   type: "select",
-                  options: categories.map(c => ({ id: c.value, label: c.value }))
+                  options: sport_categories.map(c => ({
+                    id: c.reference_value_id,
+                    label: c.value
+                  }))
                 },
-                { key: "is_team_sport", label: "Team Sport", type: "text", defaultValue: "Yes" },
+                { 
+                  key: "is_team_sport", 
+                  label: "Team Sport", 
+                  type: "select", 
+                  options: [
+                    { id: 1, label: "Yes" },
+                    { id: 0, label: "No" }
+                  ],
+                  defaultValue: "Yes" 
+                },
                 { key: "governing_body", label: "Governing Body", type: "text" },
+                { key: "description", label: "Description", type: "text" },
               ]}
             />
           )}
@@ -99,8 +112,8 @@ export function SportsTable({
               onClick={() => onSelectSport(sport.sport_id)}
               // 2. Add visual feedback (cursor and highlight)
               className={`cursor-pointer transition-colors ${selectedId === sport.sport_id
-                  ? "bg-muted font-medium hover:bg-muted"
-                  : "hover:bg-muted/50"
+                ? "bg-muted font-medium hover:bg-muted"
+                : "hover:bg-muted/50"
                 }`}
             >
               {(data, update, isEditing) => (
@@ -114,7 +127,7 @@ export function SportsTable({
                       value={data.sport_name}
                       renderInput={() => (
                         <Input
-                          defaultValue={data.sport_name}
+                          value={data.sport_name}
                           onChange={(e) => update("sport_name", e.target.value)}
                           className="h-8"
                         />
@@ -128,11 +141,34 @@ export function SportsTable({
                       isEditing={isEditing}
                       value={data.category_id}
                       renderInput={() => (
-                        <Input
-                          defaultValue={data.category_id}
-                          onChange={(e) => update("category_id", e.target.value)}
-                          className="h-8"
-                        />
+                        <Select
+                          value={data.category_id ? String(data.category_id) : ""}
+                          onValueChange={(newValue) => {
+                            // Call the FastAPI update endpoint
+                            update("category_id", newValue === "" ? null : Number(newValue));
+                          }}
+                        >
+                          <SelectTrigger className="w-[180px] h-8">
+                            <SelectValue placeholder="Select category">
+                              {sport_categories.find(c => String(c.reference_value_id) === String(data.category_id))?.value}
+                            </SelectValue>
+                          </SelectTrigger>
+                          <SelectContent>
+                            {sport_categories.map((c) => (
+                              <SelectItem
+                                key={c.reference_value_id}
+                                value={String(c.reference_value_id)}
+                              >
+                                {c.value}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        // <Input
+                        //   defaultValue={data.category_id}
+                        //   onChange={(e) => update("category_id", e.target.value)}
+                        //   className="h-8"
+                        // />
                       )}
                       renderDisplay={() => (
                         <span>{sport.sport_category.value ?? "N/A"}</span>
@@ -154,8 +190,8 @@ export function SportsTable({
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="Yes">Yes</SelectItem>
-                            <SelectItem value="No">No</SelectItem>
+                            <SelectItem value="true">Yes</SelectItem>
+                            <SelectItem value="false">No</SelectItem>
                           </SelectContent>
                         </Select>
                       )}
@@ -172,7 +208,7 @@ export function SportsTable({
                       value={data.governing_body}
                       renderInput={() => (
                         <Input
-                          defaultValue={data.governing_body}
+                          value={data.governing_body}
                           onChange={(e) => update("governing_body", e.target.value)}
                           className="h-8"
                         />
@@ -185,7 +221,7 @@ export function SportsTable({
                       value={data.description}
                       renderInput={() => (
                         <Input
-                          defaultValue={data.description}
+                          value={data.description}
                           onChange={(e) => update("description", e.target.value)}
                           className="h-8"
                         />

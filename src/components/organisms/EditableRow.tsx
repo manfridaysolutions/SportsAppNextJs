@@ -21,22 +21,27 @@ interface EditableRowProps<T> {
 }
 
 export function EditableRow<T extends object>({
-  record, 
-  idField, 
-  endpoint, 
-  onRefresh, 
-  onClick, 
-  className, 
+  record,
+  idField,
+  endpoint,
+  onRefresh,
+  onClick,
+  className,
   children
 }: EditableRowProps<T>) {
   const [buffer, setBuffer] = useState<Partial<T>>({});
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
-  
+
   const id = record[idField] as number;
 
+  const merged = { ...record, ...buffer };
+
   const updateField = (field: keyof T, value: any) => {
-    setBuffer(prev => ({ ...prev, [field]: value }));
+    setBuffer((prev) => ({
+      ...prev,
+      [field]: value
+    } as T));
   };
 
   const handleSave = async () => {
@@ -49,7 +54,7 @@ export function EditableRow<T extends object>({
     setSaving(true);
     try {
       const fullData = { ...record, ...buffer };
-      
+
       // Clean the payload (excluding ID and complex objects)
       const payload = Object.keys(fullData).reduce((acc, key) => {
         const value = fullData[key as keyof T];
@@ -80,16 +85,15 @@ export function EditableRow<T extends object>({
       onClick={onClick}
       className={isEditing ? "bg-muted/30" : "hover:bg-muted/50 transition-colors"}
     >
-      {/* 1. Render the fields passed via children */}
-      {children(record, updateField, isEditing)}
+      {children(merged, updateField, isEditing)}
 
       {/* 2. Action Cell: Show Edit button or Save/Cancel Molecule */}
       <TableCell className="text-right">
         {isEditing ? (
-          <RowActions 
-            onSave={handleSave} 
-            onCancel={handleCancel} 
-            isSaving={saving} 
+          <RowActions
+            onSave={handleSave}
+            onCancel={handleCancel}
+            isSaving={saving}
           />
         ) : (
           <EditButton onClick={() => setIsEditing(true)} />

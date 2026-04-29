@@ -59,10 +59,10 @@ export function LeaguesTable({
                         <TableHead>Country</TableHead>
                         {/* ⭐ Add Button moved here */}
                         <TableHead className="text-right">
-                            <AddButton 
-                                label=" " 
+                            <AddButton
+                                label="League"
                                 onClick={() => setCreating(true)}
-                                className="mb-0 py-1 px-3 text-xs inline-flex" 
+                                className="mb-0 py-1 px-3 text-xs inline-flex"
                             />
                         </TableHead>
                     </TableRow>
@@ -149,7 +149,9 @@ export function LeaguesTable({
                                                     }}
                                                 >
                                                     <SelectTrigger className="w-[180px]">
-                                                        <SelectValue placeholder="Select country" />
+                                                        <SelectValue placeholder="Select country">
+                                                            {countries.find(c => String(c.reference_value_id) === String(data.country_id))?.value}
+                                                        </SelectValue>
                                                     </SelectTrigger>
 
                                                     <SelectContent>
