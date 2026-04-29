@@ -1,6 +1,6 @@
 import { SaveButton, CancelButton } from "../atoms/ActionButtons";
 
-interface RowActionsProps {
+interface EditableRowActionsProps {
   onSave: () => void;
   onCancel: () => void;
   isSaving?: boolean;
@@ -8,13 +8,13 @@ interface RowActionsProps {
   cancelLabel?: string;
 }
 
-export function RowActions({ 
+export function EditableRowActions({ 
   onSave, 
   onCancel, 
   isSaving, 
   saveLabel = "Save", 
   cancelLabel = "Cancel" 
-}: RowActionsProps) {
+}: EditableRowActionsProps) {
   return (
     <div className="flex gap-2">
       <SaveButton onClick={onSave} disabled={isSaving}>

@@ -1,6 +1,6 @@
 "use client";
 
-import { RowActions } from "../molecules/RowActions";
+import { EditableRowActions } from "../molecules/EditableRowActions";
 
 import { useState } from "react";
 import { TableRow, TableCell } from "@/components/ui/table";
@@ -114,7 +114,7 @@ export function CreateRow({
           </TableCell>
         ))}
       <TableCell>
-        <RowActions 
+        <EditableRowActions 
           onSave={save} 
           onCancel={onCancel} 
           isSaving={saving} 

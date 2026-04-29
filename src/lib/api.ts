@@ -28,3 +28,13 @@ export async function apiSave<T>(path: string, method: "POST" | "PUT", data: any
 
   return res.json();
 }
+
+export async function apiDelete(path: string): Promise<void> {
+  const res = await fetch(`${API_URL}${path}`, {
+    method: "DELETE",
+  });
+
+  if (!res.ok) {
+    throw new Error(`API DELETE ${path} failed: ${res.status}`);
+  }
+}

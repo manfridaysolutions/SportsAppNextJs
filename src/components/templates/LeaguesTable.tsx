@@ -49,9 +49,6 @@ export function LeaguesTable({
 
     return (
         <div className="w-full overflow-x-auto p-4">
-            <AddButton onClick={() => setCreating(true)}>
-              Add League
-            </AddButton>
             <Table>
                 <TableCaption>A list of all leagues in the system</TableCaption>
                 <TableHeader>
@@ -60,6 +57,13 @@ export function LeaguesTable({
                         <TableHead>Name</TableHead>
                         <TableHead>Level</TableHead>
                         <TableHead>Country</TableHead>
+                        <TableHead className="text-right">
+                            <AddButton
+                                label="League"
+                                onClick={() => setCreating(true)}
+                                className="mb-0 py-1 px-3 text-xs inline-flex"
+                            />
+                        </TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -144,7 +148,9 @@ export function LeaguesTable({
                                                     }}
                                                 >
                                                     <SelectTrigger className="w-[180px]">
-                                                        <SelectValue placeholder="Select country" />
+                                                        <SelectValue placeholder="Select country">
+                                                            {countries.find(c => String(c.reference_value_id) === String(data.country_id))?.value}
+                                                        </SelectValue>
                                                     </SelectTrigger>
 
                                                     <SelectContent>
