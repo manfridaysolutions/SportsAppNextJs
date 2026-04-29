@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchReferenceValues } from "@/types/referencevalue";
+import { fetchReferenceValues } from "@/lib/api";
 
 export function useReferenceValues(names: string[]) {
   return useQuery({

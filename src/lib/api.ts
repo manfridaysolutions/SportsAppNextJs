@@ -1,3 +1,5 @@
+import { ReferenceValue } from "../types/referencevalue"
+
 export const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function apiGet<T>(path: string): Promise<T> {
@@ -37,4 +39,21 @@ export async function apiDelete(path: string): Promise<void> {
   if (!res.ok) {
     throw new Error(`API DELETE ${path} failed: ${res.status}`);
   }
+}
+
+
+export async function fetchReferenceValues(names: string[]) {
+  const params = new URLSearchParams();
+  names.forEach(n => params.append("names", n));
+
+  const res = await fetch(
+    `${API_URL}/api/v1/reference-categories/by-names/?${params.toString()}`,
+    { cache: "no-store" }
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch reference values");
+  }
+
+  return res.json() as Promise<Record<string, ReferenceValue[]>>;
 }

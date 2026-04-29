@@ -3,14 +3,17 @@
 import { useReferenceValues } from "@/hooks/useReferenceValues";
 import { SportsTable } from "@/components/templates/SportsTable";
 import { LeaguesTable } from "@/components/templates/LeaguesTable";
+import { PositionsTable } from "@/components/templates/PositionsTable";
 import { apiGet } from "@/lib/api";
 import { Sport } from "@/types/sport";
 import { League } from "@/types/league";
+import { Position } from "@/types/position";
 import { useState, useEffect, useCallback } from "react";
 
 export default function SportsPage() {
   const [sports_get, setSports] = useState<Sport[]>([]);
   const [leagues_get, setLeagues] = useState<League[]>([]);
+  const [positions_get, setPositions] = useState<Position[]>([]);
   const [selectedSportId, setSelectedSportId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -40,6 +43,22 @@ export default function SportsPage() {
     }
   }, []);
 
+  // --- REFRESH LOGIC FOR LEAGUES ---
+  const fetchPositions = useCallback(async (id: number | null) => {
+    // Use a strict null/undefined check
+    if (id === null || id === undefined) {
+      setPositions([]);
+      return;
+    }
+
+    try {
+      const data = await apiGet<Position[]>(`/api/v1/position/?sport_id=${id}`);
+      setPositions(data);
+    } catch (error) {
+      console.error("Failed to fetch positions:", error);
+    }
+  }, []);
+
   // Initial Fetch
   useEffect(() => {
     const init = async () => {
@@ -53,6 +72,11 @@ export default function SportsPage() {
   useEffect(() => {
     fetchLeagues(selectedSportId);
   }, [selectedSportId, fetchLeagues]);
+
+  // On-Demand League Fetching
+  useEffect(() => {
+    fetchPositions(selectedSportId);
+  }, [selectedSportId, fetchPositions]);
 
   const { data } = useReferenceValues(["SportCategory", "Country"]);
 
@@ -74,15 +98,34 @@ export default function SportsPage() {
         selectedId={selectedSportId}
         onRefresh={fetchSports} // 👈 Passed to SportsTable for Edit/Create success
       />
+      <table>
+        <tbody>
+          <tr>
+            <td className="align-top pr-6">
+              <h1 className="text-2xl font-semibold mt-8 mb-4 tracking-tight">Leagues</h1>
+              <LeaguesTable
+                referenceData={referenceData}
+                leagues={leagues_get}
+                onRefresh={() => fetchLeagues(selectedSportId)}
+                selectedSportId={selectedSportId}
+              />
+            </td>
 
-      <h1 className="text-2xl font-semibold mt-8 mb-4 tracking-tight">Leagues</h1>
+            <td className="align-top pr-6">
+              <h1 className="text-2xl font-semibold mt-8 mb-4 tracking-tight">Positions</h1>
+              <PositionsTable
+                positions={positions_get}
+                onRefresh={() => fetchPositions(selectedSportId)}
+                selectedSportId={selectedSportId}
+              />
+            </td>
 
-      <LeaguesTable
-        referenceData={referenceData}
-        leagues={leagues_get}
-        onRefresh={() => fetchLeagues(selectedSportId)}
-        selectedSportId={selectedSportId}
-      />
+            <td className="align-top">
+              <h1 className="text-2xl font-semibold mt-8 mb-4 tracking-tight">Stat Definitions</h1>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   );
 }
