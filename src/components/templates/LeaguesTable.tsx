@@ -57,7 +57,6 @@ export function LeaguesTable({
                         <TableHead>Name</TableHead>
                         <TableHead>Level</TableHead>
                         <TableHead>Country</TableHead>
-                        {/* ⭐ Add Button moved here */}
                         <TableHead className="text-right">
                             <AddButton
                                 label="League"

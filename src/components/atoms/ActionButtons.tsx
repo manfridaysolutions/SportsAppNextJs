@@ -52,3 +52,13 @@ export const CancelButton = ({ onClick, children = "Cancel" }: ActionButtonProps
     {children}
   </button>
 );
+
+export const DeleteButton = ({ onClick, disabled, children = "Delete" }: ActionButtonProps) => (
+  <button
+    onClick={onClick}
+    disabled={disabled}
+    className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 transition-colors font-medium shadow-sm"
+  >
+    {children}
+  </button>
+);

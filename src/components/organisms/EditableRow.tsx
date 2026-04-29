@@ -2,17 +2,17 @@
 
 import { useState } from "react";
 import { TableRow, TableCell } from "../ui/table";
-import { apiSave } from "@/lib/api";
-import { RowActions } from "../molecules/RowActions";
-import { EditButton } from "../atoms/ActionButtons";
+import { apiSave, apiDelete } from "@/lib/api";
+import { EditableRowActions } from "../molecules/EditableRowActions";
+import { ReadonlyRowActions } from "../molecules/ReadonlyRowActions";
 
 interface EditableRowProps<T> {
   record: T;
   idField: keyof T;
   endpoint: string;
   onRefresh: () => void;
-  onClick?: () => void; // Optional click handler for row selection
-  className?: string; // Optional additional support selection styling
+  onClick?: () => void;
+  className?: string;
   children: (
     data: T,
     update: (field: keyof T, value: any) => void,
@@ -45,7 +45,6 @@ export function EditableRow<T extends object>({
   };
 
   const handleSave = async () => {
-    // Only save if there are actual changes in the buffer
     if (Object.keys(buffer).length === 0) {
       setIsEditing(false);
       return;
@@ -55,10 +54,9 @@ export function EditableRow<T extends object>({
     try {
       const fullData = { ...record, ...buffer };
 
-      // Clean the payload (excluding ID and complex objects)
       const payload = Object.keys(fullData).reduce((acc, key) => {
         const value = fullData[key as keyof T];
-        if (key !== idField && typeof value !== 'object' && value !== null) {
+        if (key !== idField && typeof value !== "object" && value !== null) {
           acc[key as keyof T] = value;
         }
         return acc;
@@ -76,8 +74,21 @@ export function EditableRow<T extends object>({
   };
 
   const handleCancel = () => {
-    setBuffer({}); // Discard changes
+    setBuffer({});
     setIsEditing(false);
+  };
+
+  // ⭐ NEW: Delete handler
+  const handleDelete = async () => {
+    const confirmed = confirm("Are you sure you want to delete this record?");
+    if (!confirmed) return;
+
+    try {
+      await apiDelete(`${endpoint}${id}`);
+      onRefresh();
+    } catch (err) {
+      console.error("Delete error", err);
+    }
   };
 
   return (
@@ -87,16 +98,18 @@ export function EditableRow<T extends object>({
     >
       {children(merged, updateField, isEditing)}
 
-      {/* 2. Action Cell: Show Edit button or Save/Cancel Molecule */}
       <TableCell className="text-right">
         {isEditing ? (
-          <RowActions
+          <EditableRowActions
             onSave={handleSave}
             onCancel={handleCancel}
             isSaving={saving}
           />
         ) : (
-          <EditButton onClick={() => setIsEditing(true)} />
+          <ReadonlyRowActions
+            onEdit={() => setIsEditing(true)}
+            onDelete={handleDelete}   // ⭐ wired in
+          />
         )}
       </TableCell>
     </TableRow>
