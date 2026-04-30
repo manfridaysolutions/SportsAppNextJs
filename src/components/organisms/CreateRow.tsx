@@ -65,10 +65,11 @@ export function CreateRow({
   return (
     <TableRow className="bg-muted/40">
 
-      {/* ⭐ ID placeholder cell */}
-      <TableCell className="text-muted-foreground italic">
-        {idPlaceholder}
-      </TableCell>
+      {idPlaceholder !== "hide" && (
+        <TableCell className="text-muted-foreground italic">
+          {idPlaceholder}
+        </TableCell>
+      )}
 
       {/* Render all visible fields */}
       {fields

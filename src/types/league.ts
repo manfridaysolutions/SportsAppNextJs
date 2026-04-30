@@ -5,5 +5,6 @@ export interface League {
   league_name: string;
   sport_id: number;
   level: number;
+  country_id: number;
   country: ReferenceValue; // ← nested object
 }
