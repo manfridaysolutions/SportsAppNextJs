@@ -1,131 +1,89 @@
 "use client";
 
-import { useReferenceValues } from "@/hooks/useReferenceValues";
 import { SportsTable } from "@/components/templates/SportsTable";
 import { LeaguesTable } from "@/components/templates/LeaguesTable";
 import { PositionsTable } from "@/components/templates/PositionsTable";
-import { apiGet } from "@/lib/api";
-import { Sport } from "@/types/sport";
-import { League } from "@/types/league";
-import { Position } from "@/types/position";
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
+import { useSports } from "@/hooks/useSports"
+import { useLeagues } from "@/hooks/useLeagues"
+import { usePositions } from "@/hooks/usePositions"
+import { useReferenceValues } from "@/hooks/useReferenceValues"
+
+const REF_KEYS = ["SportCategory", "Country"];
 
 export default function SportsPage() {
-  const [sports_get, setSports] = useState<Sport[]>([]);
-  const [leagues_get, setLeagues] = useState<League[]>([]);
-  const [positions_get, setPositions] = useState<Position[]>([]);
   const [selectedSportId, setSelectedSportId] = useState<number | null>(null);
-  const [loading, setLoading] = useState(true);
 
-  // --- REFRESH LOGIC FOR SPORTS ---
-  const fetchSports = async () => {
-    try {
-      const sportsData = await apiGet<Sport[]>("/api/v1/sports/");
-      setSports(sportsData);
-    } catch (error) {
-      console.error("Failed to refresh sports:", error);
-    }
-  };
+  const { data: sports = [], refetch: refetchSports, isLoading: isLoadingSports } = useSports();
+  const { data: leagues = [],  refetch: refetchLeagues, isLoading: isLoadingLeagues } = useLeagues(selectedSportId);
+  const { data: positions = [], refetch: refetchPositions, isLoading: isLoadingPositions } = usePositions(selectedSportId);
 
-  // --- REFRESH LOGIC FOR LEAGUES ---
-  const fetchLeagues = useCallback(async (id: number | null) => {
-    // Use a strict null/undefined check
-    if (id === null || id === undefined) {
-      setLeagues([]);
-      return;
-    }
-
-    try {
-      const data = await apiGet<League[]>(`/api/v1/league/?sport_id=${id}`);
-      setLeagues(data);
-    } catch (error) {
-      console.error("Failed to fetch leagues:", error);
-    }
-  }, []);
-
-  // --- REFRESH LOGIC FOR LEAGUES ---
-  const fetchPositions = useCallback(async (id: number | null) => {
-    // Use a strict null/undefined check
-    if (id === null || id === undefined) {
-      setPositions([]);
-      return;
-    }
-
-    try {
-      const data = await apiGet<Position[]>(`/api/v1/position/?sport_id=${id}`);
-      setPositions(data);
-    } catch (error) {
-      console.error("Failed to fetch positions:", error);
-    }
-  }, []);
-
-  // Initial Fetch
-  useEffect(() => {
-    const init = async () => {
-      await fetchSports();
-      setLoading(false);
-    };
-    init();
-  }, []);
-
-  // On-Demand League Fetching
-  useEffect(() => {
-    fetchLeagues(selectedSportId);
-  }, [selectedSportId, fetchLeagues]);
-
-  // On-Demand League Fetching
-  useEffect(() => {
-    fetchPositions(selectedSportId);
-  }, [selectedSportId, fetchPositions]);
-
-  const { data } = useReferenceValues(["SportCategory", "Country"]);
-
-  const referenceData = (data as unknown as any[])?.reduce((acc, category) => {
-    acc[category.name] = category.reference_values;
-    return acc;
-  }, {} as Record<string, any[]>) || {};
-
-  if (loading || !data) return <div className="p-6">Loading sportsapp data...</div>;
+  // 4. Reference Data Logic
+  const { data: referenceData = {}, isLoading: isLoadingRef } = useReferenceValues(REF_KEYS);
 
   return (
     <div className="min-h-screen p-6 bg-background text-foreground transition-colors duration-300">
-      <h1 className="text-2xl font-semibold mb-4 tracking-tight">Sports</h1>
+      <header className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-semibold tracking-tight">Sports Management</h1>
+        {(isLoadingSports || isLoadingRef) && (
+          <span className="text-sm text-muted-foreground animate-pulse">Syncing...</span>
+        )}
+      </header>
 
-      <SportsTable
-        referenceData={referenceData}
-        sports={sports_get}
-        onSelectSport={(id) => setSelectedSportId(id)}
-        selectedId={selectedSportId}
-        onRefresh={fetchSports} // 👈 Passed to SportsTable for Edit/Create success
-      />
-      <table>
-        <tbody>
-          <tr>
-            <td className="align-top pr-6">
-              <h1 className="text-2xl font-semibold mt-8 mb-4 tracking-tight">Leagues</h1>
-              <LeaguesTable
-                referenceData={referenceData}
-                leagues={leagues_get}
-                onRefresh={() => fetchLeagues(selectedSportId)}
-                selectedSportId={selectedSportId}
-              />
-            </td>
+      {/* Main Sports Table Section */}
+      <section>
+        {isLoadingSports ? (
+          <div className="h-64 flex items-center justify-center border rounded-lg bg-muted/20">
+            <p className="text-sm opacity-50">Loading sports list...</p>
+          </div>
+        ) : (
+          <SportsTable
+            sports={sports}
+            referenceData={referenceData}
+            onSelectSport={(id) => setSelectedSportId(id)}
+            selectedId={selectedSportId}
+            onRefresh={() => refetchSports()}
+          />
+        )}
+      </section>
 
-            <td className="align-top pr-6">
-              <h1 className="text-2xl font-semibold mt-8 mb-4 tracking-tight">Positions</h1>
-              <PositionsTable
-                positions={positions_get}
-                onRefresh={() => fetchPositions(selectedSportId)}
-                selectedSportId={selectedSportId}
-              />
-            </td>
+      {/* Dependent Details Section */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+        {/* Leagues Column */}
+        <div className="space-y-4">
+          <h2 className="text-xl font-semibold tracking-tight">Leagues</h2>
+          <LeaguesTable
+            referenceData={referenceData}
+            leagues={leagues}
+            onRefresh={() => refetchLeagues()}
+            selectedSportId={selectedSportId}
+          />
+          {isLoadingLeagues && (
+            <p className="text-xs text-blue-500 animate-pulse">Fetching leagues...</p>
+          )}
+        </div>
 
-            <td className="align-top">
-              <h1 className="text-2xl font-semibold mt-8 mb-4 tracking-tight">Stat Definitions</h1>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+        {/* Positions Column */}
+        <div className="space-y-4">
+          <h2 className="text-xl font-semibold tracking-tight">Positions</h2>
+          <PositionsTable
+            positions={positions}
+            onRefresh={() => refetchPositions()}
+            selectedSportId={selectedSportId}
+          />
+          {isLoadingPositions && (
+            <p className="text-xs text-blue-500 animate-pulse">Fetching positions...</p>
+          )}
+        </div>
+
+        {/* Stat Definitions Column */}
+        <div className="space-y-4">
+          <h2 className="text-xl font-semibold tracking-tight">Stat Definitions</h2>
+          {!selectedSportId && (
+            <p className="text-sm text-muted-foreground italic">Select a sport to view stats</p>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

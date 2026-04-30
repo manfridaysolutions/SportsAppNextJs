@@ -1,4 +1,4 @@
-import { ReferenceValue } from "../types/referencevalue"
+import { ReferenceCategory } from "@/types/referencecategory";
 
 export const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -42,7 +42,7 @@ export async function apiDelete(path: string): Promise<void> {
 }
 
 
-export async function fetchReferenceValues(names: string[]) {
+export async function fetchReferenceValues(names: string[]): Promise<ReferenceCategory[]> {
   const params = new URLSearchParams();
   names.forEach(n => params.append("names", n));
 
@@ -55,5 +55,6 @@ export async function fetchReferenceValues(names: string[]) {
     throw new Error("Failed to fetch reference values");
   }
 
-  return res.json() as Promise<Record<string, ReferenceValue[]>>;
+  // Return it as the array it actually is
+  return res.json(); 
 }
