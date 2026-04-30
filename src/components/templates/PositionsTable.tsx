@@ -20,10 +20,11 @@ export function PositionsTable({ selectedSportId }: { selectedSportId: number | 
             items={positions}
             isLoading={isLoading}
             idField="position_id"
+            idPlaceholder="hide"
             endpoint="/api/v1/position/"
             onRefresh={refetch}
             addLabel="Position"
-            headers={["ID", "Name", "Abbreviation", "Description"]}
+            headers={["Name", "Abbreviation", "Description"]}
             createFields={[
                 { key: "position_name", label: "Name", type: "text" },
                 { key: "sport_id", label: "Sport", type: "number", visible: false, defaultValue: selectedSportId },
@@ -33,7 +34,6 @@ export function PositionsTable({ selectedSportId }: { selectedSportId: number | 
         >
             {(data, update, isEditing) => (
                 <>
-                    <TableCell>{data.position_id}</TableCell>
                     <TableCell>
                         <EditableCell
                             isEditing={isEditing}

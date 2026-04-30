@@ -35,12 +35,13 @@ return (
       isLoading={isLoading} // Assuming sports are passed in as props, loading handled by parent
       referenceData={filteredRefData}
       idField="sport_id"
+      idPlaceholder="hide"
       endpoint="/api/v1/sports/"
       onRefresh={refetch}
       addLabel="Sport"
       selectedId={selectedId}
       onSelect={onSelectSport}
-      headers={["ID", "Name", "Category", "Team Sport", "Governing Body", "Description"]}
+      headers={["Name", "Category", "Team Sport", "Governing Body", "Description"]}
       createFields={[
         { key: "sport_name", label: "Name", type: "text" },
         {
@@ -71,8 +72,6 @@ return (
         
         return (
           <>
-            <TableCell className="font-mono text-xs">{data.sport_id}</TableCell>
-
             {/* Name */}
             <TableCell>
               <EditableCell

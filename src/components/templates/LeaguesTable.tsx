@@ -30,11 +30,12 @@ export function LeaguesTable({ referenceData, selectedSportId }: {
             items={leagues}
             isLoading={isLoading}
             idField="league_id"
+            idPlaceholder="hide"
             endpoint="/api/v1/league/"
             onRefresh={refetch}
             referenceData={filteredRefData}
             addLabel="League"
-            headers={["ID", "Name", "Level", "Country"]}
+            headers={["Name", "Level", "Country"]}
             createFields={[
                 { key: "league_name", label: "Name", type: "text" },
                 { key: "sport_id", label: "Sport", type: "number", visible: false, defaultValue: selectedSportId },
@@ -51,7 +52,6 @@ export function LeaguesTable({ referenceData, selectedSportId }: {
                 const rowCountries = refData["Country"] ?? [];
                 return (
                     <>
-                        <TableCell className="font-mono text-xs">{data.league_id}</TableCell>
                         <TableCell>
                             <EditableCell
                                 isEditing={isEditing}
