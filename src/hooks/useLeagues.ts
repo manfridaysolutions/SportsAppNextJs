@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { apiGet, } from "@/lib/api";
+import { apiGet } from "@/lib/api";
 import { League } from "@/types/league";
 
 export const API_ENDPOINT = "/api/v1/league/";

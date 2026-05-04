@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiGet } from "@/lib/api";
-
 import { Position } from "@/types/position";
 
 export const API_ENDPOINT = "/api/v1/position/";
