@@ -1,8 +1,8 @@
 "use client";
 
 import { usePositions } from "@/hooks/usePositions"
-import { BaseDataTable2 } from "../organisms/BaseDataTable2";
-import { FieldDef } from "../organisms/EditableRow2";
+import { BaseDataTable } from "../organisms/BaseDataTable";
+import { FieldDef } from "../organisms/EditableRow";
 
 export function PositionsTable({ selectedSportId }: { 
 
@@ -18,7 +18,7 @@ export function PositionsTable({ selectedSportId }: {
     ];
 
     return (
-        <BaseDataTable2
+        <BaseDataTable
             title="Positions"
             caption="A list of all positions in the system"
             items={positions}
@@ -28,7 +28,6 @@ export function PositionsTable({ selectedSportId }: {
             endpoint="/api/v1/position/"
             onRefresh={refetch}
             addLabel="Position"
-            headers={["Name", "Abbreviation", "Description"]}
             fields={positionFields}
        />
     );

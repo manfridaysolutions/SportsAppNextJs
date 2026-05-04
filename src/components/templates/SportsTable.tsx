@@ -1,8 +1,8 @@
 "use client";
 
 import { useSports } from "@/hooks/useSports";
-import { BaseDataTable2 } from "../organisms/BaseDataTable2";
-import { FieldDef } from "../organisms/EditableRow2";
+import { BaseDataTable } from "../organisms/BaseDataTable";
+import { FieldDef } from "../organisms/EditableRow";
 
 export function SportsTable({ referenceData, selectedId, onSelectSport }: {
   referenceData: Record<string, any[]>;
@@ -26,11 +26,7 @@ export function SportsTable({ referenceData, selectedId, onSelectSport }: {
     {
       key: "is_team_sport",
       label: "Team Sport",
-      type: "select",
-      options: [
-        { id: 1, label: "Yes" },
-        { id: 0, label: "No" },
-      ],
+      type: "boolean",
       defaultValue: 1,
     },
     { key: "governing_body", label: "Governing Body", type: "text" },
@@ -38,7 +34,7 @@ export function SportsTable({ referenceData, selectedId, onSelectSport }: {
   ];
 
 return (
-    <BaseDataTable2
+    <BaseDataTable
       title="Sports"
       caption="A list of all sports in the system"
       items={sports}
@@ -51,7 +47,6 @@ return (
       fields={sportFields}
       selectedId={selectedId}
       onSelect={onSelectSport}
-      headers={["Name", "Category", "Team Sport", "Governing Body", "Description"]}
    />
   );
 }

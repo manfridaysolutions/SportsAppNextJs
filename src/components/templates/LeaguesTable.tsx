@@ -1,8 +1,8 @@
 "use client";
 
 import { useLeagues } from "@/hooks/useLeagues";
-import { BaseDataTable2 } from "../organisms/BaseDataTable2";
-import { FieldDef } from "../organisms/EditableRow2";
+import { BaseDataTable } from "../organisms/BaseDataTable";
+import { FieldDef } from "../organisms/EditableRow";
 
 export function LeaguesTable({ referenceData, selectedSportId }: {
     referenceData: Record<string, any[]>;
@@ -25,7 +25,7 @@ export function LeaguesTable({ referenceData, selectedSportId }: {
     ];
 
     return (
-        <BaseDataTable2
+        <BaseDataTable
             title="Leagues"
             caption="A list of all leagues in the system"
             items={leagues}
@@ -36,7 +36,6 @@ export function LeaguesTable({ referenceData, selectedSportId }: {
             onRefresh={refetch}
             addLabel="League"
             fields={leagueFields}
-            headers={["Name", "Level", "Country"]}
         />
     );
 }

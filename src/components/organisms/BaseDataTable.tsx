@@ -15,16 +15,10 @@ interface BaseDataTableProps<T> {
   idPlaceholder?: string;
   endpoint: string;
   onRefresh: () => void;
-  createFields: any[];
+  fields: any[];
   addLabel: string;
-  headers: string[];
+  headers?: string[];
   referenceData?: Record<string, any[]>;
-  children: (
-    data: T,
-    update: (key: string, value: any) => void,
-    isEditing: boolean,
-    refData: Record<string, any[]>
-  ) => React.ReactNode;
   selectedId?: number | null;
   onSelect?: (id: number) => void;
 }
@@ -38,11 +32,10 @@ export function BaseDataTable<T extends Record<string, any>>({
   idPlaceholder = "auto",
   endpoint,
   onRefresh,
-  createFields,
+  fields,
   addLabel,
   headers,
   referenceData,
-  children,
   selectedId,
   onSelect,
 }: BaseDataTableProps<T>) {
@@ -56,6 +49,11 @@ export function BaseDataTable<T extends Record<string, any>>({
     return <div className="p-4 text-sm text-muted-foreground animate-pulse">Loading required data...</div>;
   }
 
+  // Logic: Use provided headers, otherwise derive from visible fields
+  const displayHeaders = headers ?? fields
+    .filter((f) => f.visible !== false)
+    .map((f) => f.label);
+
   return (
     <div className="space-y-4">
       <h2 className="text-xl font-semibold tracking-tight">{title}</h2>
@@ -68,7 +66,7 @@ export function BaseDataTable<T extends Record<string, any>>({
             <TableCaption>{caption}</TableCaption>
             <TableHeader>
               <TableRow className="hover:bg-transparent">
-                {headers.map((h) => <TableHead key={h}>{h}</TableHead>)}
+                {displayHeaders.map((h) => <TableHead key={h}>{h}</TableHead>)}
                 <TableHead className="text-right">
                   <AddButton
                     label={addLabel}
@@ -88,7 +86,7 @@ export function BaseDataTable<T extends Record<string, any>>({
                     onRefresh();
                   }}
                   onCancel={() => setCreating(false)}
-                  fields={createFields}
+                  fields={fields}
                 />
               )}
               {items.map((item) => (
@@ -98,11 +96,12 @@ export function BaseDataTable<T extends Record<string, any>>({
                   idField={idField}
                   endpoint={endpoint}
                   onRefresh={onRefresh}
+                  fields={fields}
+                  idPlaceholder={idPlaceholder}
                   onClick={onSelect ? () => onSelect(item[idField]) : undefined}
                   className={onSelect ? `cursor-pointer transition-colors ${selectedId === item[idField] ? "bg-muted font-medium" : "hover:bg-muted/50"
                     }` : ""}
                 >
-                  {(data, update, isEditing) => children(data, update, isEditing, refData)}
                 </EditableRow>
               ))}
             </TableBody>
