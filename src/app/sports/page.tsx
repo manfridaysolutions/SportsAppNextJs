@@ -3,11 +3,11 @@
 import { SportsTable } from "@/components/templates/SportsTable";
 import { LeaguesTable } from "@/components/templates/LeaguesTable";
 import { PositionsTable } from "@/components/templates/PositionsTable";
+import { StatDefinitionsTable } from "@/components/templates/StatDefinitionsTable";
 import { useState } from "react";
-import { usePositions } from "@/hooks/usePositions"
 import { useReferenceValuesForCategories } from "@/hooks/useReferenceValuesForCategories"
 
-const REF_KEYS = ["SportCategory", "Country"];
+const REF_KEYS = ["SportCategory", "Country", "Statistical Unit"];
 
 export default function SportsPage() {
   const [selectedSportId, setSelectedSportId] = useState<number | null>(null);
@@ -43,12 +43,10 @@ export default function SportsPage() {
         />
 
         {/* Stat Definitions Column */}
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold tracking-tight">Stat Definitions</h2>
-          {!selectedSportId && (
-            <p className="text-sm text-muted-foreground italic">Select a sport to view stats</p>
-          )}
-        </div>
+        <StatDefinitionsTable
+          referenceData={referenceData}
+          selectedSportId={selectedSportId}
+        />
       </div>
     </div>
   );

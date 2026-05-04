@@ -1,16 +1,15 @@
 "use client";
 
-import {
-    TableCell,
-} from "../ui/table";
+import { usePositions } from "@/hooks/usePositions"
+import { BaseDataTable } from "../organisms/BaseDataTable";
+import { TableCell } from "../ui/table";
 import { Input } from "../ui/input";
 import { EditableCell } from "../organisms/EditableCell";
 
-import { usePositions } from "@/hooks/usePositions"
-import { BaseDataTable } from "../organisms/BaseDataTable";
 
-
-export function PositionsTable({ selectedSportId }: { selectedSportId: number | null }) {
+export function PositionsTable({ selectedSportId }: { 
+    selectedSportId: number | null 
+}) {
     const { data: positions = [], refetch, isLoading } = usePositions(selectedSportId);
 
     return (
