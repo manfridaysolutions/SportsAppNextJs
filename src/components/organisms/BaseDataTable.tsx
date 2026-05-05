@@ -32,6 +32,7 @@ interface BaseDataTableProps<T> {
   headers?: string[]; // Optional: will use field labels if not provided
   referenceData?: Record<string, any[]>;
   selectedId?: number | null;
+  showRowsPerPage?: boolean; // Pass-through prop
   onSelect?: (id: number) => void;
 }
 
@@ -49,6 +50,7 @@ export function BaseDataTable<T extends Record<string, any>>({
   addLabel,
   referenceData,
   selectedId,
+  showRowsPerPage = true,
   onSelect
 }: BaseDataTableProps<T>) {
   const [creating, setCreating] = useState(false);
@@ -79,8 +81,12 @@ export function BaseDataTable<T extends Record<string, any>>({
 
   return (
     <div className="space-y-4">
-      <Table><TableRow><TableCell><h2 className="text-xl font-semibold tracking-tight">{title}</h2></TableCell>
-        <TableCell>
+      {/* COMPACT HEADER ROW */}
+      <div className="flex items-center justify-between px-1">
+        <h2 className="text-xl font-semibold tracking-tight">{title}</h2>
+
+        <div className="flex items-center gap-6">
+          {/* Pagination is now an inline utility in the header */}
           <TablePagination
             currentPage={currentPage}
             totalPages={totalPages}
@@ -89,14 +95,15 @@ export function BaseDataTable<T extends Record<string, any>>({
             startIndex={startIndex}
             onPageChange={setCurrentPage}
             onLimitChange={setItemsPerPage}
+            showRowsPerPage={showRowsPerPage}
           />
-        </TableCell>
-      </TableRow></Table>
+        </div>
+      </div>
 
       {isLoading ? (
         <p className="text-xs text-blue-500 animate-pulse">Fetching {title.toLowerCase()}...</p>
       ) : (
-        <div className="w-full overflow-x-auto p-4 shadow-sm border rounded-lg">
+        <div className="w-full overflow-x-auto shadow-sm border rounded-lg bg-background">
           <Table>
             {/* <TableCaption>{caption}</TableCaption> */}
             <TableHeader>

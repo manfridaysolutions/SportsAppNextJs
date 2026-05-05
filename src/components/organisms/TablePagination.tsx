@@ -1,3 +1,5 @@
+import { ChevronLeft, ChevronRight } from "lucide-react"; // Or similar icon library
+
 interface PaginationProps {
   currentPage: number;
   totalPages: number;
@@ -15,64 +17,59 @@ export function TablePagination({
   totalPages,
   itemsPerPage,
   totalItems,
-  startIndex,
+  startIndex, // Ensure this is passed from the hook
   onPageChange,
   onLimitChange,
-  pageSizeOptions = [10, 20, 50, 100],
-  showRowsPerPage = true, // Default to visible
+  showRowsPerPage = true,
 }: PaginationProps) {
+  
+  if (totalItems <= itemsPerPage) return null;
+
+  // Calculate the end of the current range
+  const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 py-3 border-t bg-muted/10">
-      {/* Left side: Range Info */}
-      <div className="text-xs text-muted-foreground order-2 sm:order-1">
-        Showing <span className="font-medium text-foreground">{startIndex + 1}</span> to{" "}
-        <span className="font-medium text-foreground">
-          {Math.min(startIndex + itemsPerPage, totalItems)}
-        </span>{" "}
-        of {totalItems} entries
+    <div className="flex items-center gap-4 text-muted-foreground">
+      {/* 1. Condensed Info Range: "1-10 of 13" */}
+      <div className="text-[11px] font-medium whitespace-nowrap">
+        <span className="text-foreground">{startIndex + 1}-{endIndex}</span>
+        <span className="mx-1">of</span>
+        <span className="text-foreground">{totalItems}</span>
       </div>
 
-      {/* Right side: Controls */}
-      <div className="flex items-center gap-4 order-1 sm:order-2">
-        
-        {/* Conditional Rows per page selector */}
-        {showRowsPerPage && (
-          <div className="flex items-center gap-2 border-r pr-4 mr-2">
-            <span className="text-xs text-muted-foreground whitespace-nowrap">Rows:</span>
-            <select
-              value={itemsPerPage}
-              onChange={(e) => onLimitChange(Number(e.target.value))}
-              className="h-8 px-1 text-xs border rounded-md bg-background focus:outline-none focus:ring-1 focus:ring-ring cursor-pointer"
-            >
-              {pageSizeOptions.map((opt) => (
-                <option key={opt} value={opt}>{opt}</option>
-              ))}
-            </select>
-          </div>
-        )}
-
-        {/* Navigation Buttons */}
-        <div className="flex items-center gap-1">
-          <button
-            onClick={() => onPageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="h-8 px-3 text-xs border rounded-md hover:bg-background disabled:opacity-40 transition-colors"
+      {/* 2. Rows Selector (Optional) */}
+      {showRowsPerPage && (
+        <div className="flex items-center gap-1 border-l pl-4 h-4 border-muted-foreground/30">
+          <span className="text-[10px] uppercase tracking-tighter font-bold">Rows</span>
+          <select
+            value={itemsPerPage}
+            onChange={(e) => onLimitChange(Number(e.target.value))}
+            className="bg-transparent text-xs font-medium focus:outline-none cursor-pointer hover:text-foreground transition-colors"
           >
-            Prev
-          </button>
-          
-          <div className="flex items-center px-2 text-xs font-medium min-w-[60px] justify-center">
-            {currentPage} / {totalPages || 1}
-          </div>
-
-          <button
-            onClick={() => onPageChange(currentPage + 1)}
-            disabled={currentPage === totalPages || totalPages === 0}
-            className="h-8 px-3 text-xs border rounded-md hover:bg-background disabled:opacity-40 transition-colors"
-          >
-            Next
-          </button>
+            {[10, 20, 50].map((opt) => (
+              <option key={opt} value={opt} className="bg-background">{opt}</option>
+            ))}
+          </select>
         </div>
+      )}
+
+      {/* 3. Navigation Icons */}
+      <div className="flex items-center gap-0.5 border-l pl-3 h-4 border-muted-foreground/30">
+        <button
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="p-1 hover:bg-muted rounded-md disabled:opacity-20 transition-all"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </button>
+        
+        <button
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="p-1 hover:bg-muted rounded-md disabled:opacity-20 transition-all"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </button>
       </div>
     </div>
   );
