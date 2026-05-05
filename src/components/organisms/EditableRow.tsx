@@ -14,17 +14,7 @@ import { apiSave, apiDelete } from "@/lib/api";
 import { EditableRowActions } from "../molecules/EditableRowActions";
 import { ReadonlyRowActions } from "../molecules/ReadonlyRowActions";
 import { EditableCell } from "./EditableCell";
-
-// Using the FieldDef interface defined in CreateRow.tsx[cite: 1]
-export interface FieldDef {
-  key: string;
-  label: string;
-  type: "text" | "number" | "select" | "boolean"; // Added boolean
-  options?: { id: number | string; label: string }[];
-  defaultValue?: any;
-  editable?: boolean;
-  visible?: boolean;
-}
+import { FieldDef } from "../molecules/FieldDef"
 
 interface EditableRowProps<T> {
   record: T;

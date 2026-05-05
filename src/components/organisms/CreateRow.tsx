@@ -11,17 +11,7 @@ import {
     SelectItem,
     SelectValue,
 } from "@/components/ui/select";
-
-// Updated to include "boolean" type
-interface FieldDef {
-    key: string;
-    label: string;
-    type: "text" | "number" | "select" | "boolean"; 
-    options?: { id: number | string; label: string }[];
-    defaultValue?: any;
-    editable?: boolean;
-    visible?: boolean;
-}
+import { FieldDef } from "../molecules/FieldDef"
 
 interface CreateRowProps {
     fields: FieldDef[];

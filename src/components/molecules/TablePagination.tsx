@@ -24,7 +24,7 @@ export function TablePagination({
   onLimitChange,
   showRowsPerPage = true,
 }: PaginationProps) {
-  
+
   if (totalItems <= initialItemsPerPage) return null;
 
   // Calculate the end of the current range
@@ -32,13 +32,31 @@ export function TablePagination({
 
   return (
     <div className="flex items-center gap-4 text-muted-foreground">
-      {/* 1. Condensed Info Range: "1-10 of 13" */}
-      <div className="text-[11px] font-medium whitespace-nowrap">
-        <span className="text-foreground">{startIndex + 1}-{endIndex}</span>
-        <span className="mx-1">of</span>
-        <span className="text-foreground">{totalItems}</span>
-      </div>
 
+      {/* 3. Navigation Icons */}
+      <div className="flex items-center gap-0.5 border-r pl-3 h-4 border-muted-foreground/30">
+        <button
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="p-1 hover:bg-muted rounded-md disabled:opacity-20 transition-all"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </button>
+        {/* 1. Condensed Info Range: "1-10 of 13" */}
+        <div className="text-[11px] font-medium whitespace-nowrap">
+          <span className="text-foreground">{startIndex + 1}-{endIndex}</span>
+          <span className="mx-1">of</span>
+          <span className="text-foreground">{totalItems}</span>
+        </div>
+        <button
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="p-1 hover:bg-muted rounded-md disabled:opacity-20 transition-all"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </button>
+      </div>
+      
       {/* 2. Rows Selector (Optional) */}
       {showRowsPerPage && (
         <div className="flex items-center gap-1 border-l pl-4 h-4 border-muted-foreground/30">
@@ -54,25 +72,6 @@ export function TablePagination({
           </select>
         </div>
       )}
-
-      {/* 3. Navigation Icons */}
-      <div className="flex items-center gap-0.5 border-l pl-3 h-4 border-muted-foreground/30">
-        <button
-          onClick={() => onPageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className="p-1 hover:bg-muted rounded-md disabled:opacity-20 transition-all"
-        >
-          <ChevronLeft className="h-4 w-4" />
-        </button>
-        
-        <button
-          onClick={() => onPageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className="p-1 hover:bg-muted rounded-md disabled:opacity-20 transition-all"
-        >
-          <ChevronRight className="h-4 w-4" />
-        </button>
-      </div>
     </div>
   );
 }

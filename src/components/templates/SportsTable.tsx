@@ -2,7 +2,7 @@
 
 import { useSports } from "@/hooks/useSports";
 import { BaseDataTable } from "../organisms/BaseDataTable";
-import { FieldDef } from "../organisms/EditableRow";
+import { FieldDef } from "../molecules/FieldDef"
 
 export const REF_REQUIREMENTS_SPORTS = ["SportCategory"];
 

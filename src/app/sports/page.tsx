@@ -3,13 +3,14 @@
 import { SportsTable, REF_REQUIREMENTS_SPORTS } from "@/components/templates/SportsTable";
 import { LeaguesTable, REF_REQUIREMENTS_LEAGUES } from "@/components/templates/LeaguesTable";
 import { PositionsTable } from "@/components/templates/PositionsTable";
-import { StatDefinitionsTable } from "@/components/templates/StatDefinitionsTable";
+import { StatDefinitionsTable, REF_REQUIREMENTS_STAT_DEF} from "@/components/templates/StatDefinitionsTable";
 import { useState } from "react";
 import { useReferenceValuesForCategories } from "@/hooks/useReferenceValuesForCategories"
 
 const DYNAMIC_REF_KEYS = Array.from(new Set([
   ...REF_REQUIREMENTS_SPORTS,
   ...REF_REQUIREMENTS_LEAGUES,
+  ...REF_REQUIREMENTS_STAT_DEF
 ]));
 
 export default function SportsPage() {
