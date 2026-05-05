@@ -7,17 +7,21 @@ import {
   TableCaption,
   TableHeader,
   TableRow,
-  TableHead
+  TableHead,
+  TableCell
 } from "../ui/table";
 import { CreateRow } from "./CreateRow";
 import { EditableRow } from "./EditableRow";
 import { AddButton } from "../atoms/ActionButtons";
-import { useSortableData,  } from "@/hooks/useSortableData";
+import { useSortableData, } from "@/hooks/useSortableData";
+import { usePagination } from "@/hooks/usePagination";
+import { TablePagination } from "./TablePagination";
 
 interface BaseDataTableProps<T> {
   title: string;
   caption: string;
   items: T[];
+  itemsPerPage?: number;
   isLoading: boolean;
   idField: string;
   idPlaceholder?: string;
@@ -33,6 +37,7 @@ interface BaseDataTableProps<T> {
 
 export function BaseDataTable<T extends Record<string, any>>({
   title,
+  itemsPerPage: initialLimit = 10,
   caption,
   items,
   isLoading,
@@ -44,12 +49,23 @@ export function BaseDataTable<T extends Record<string, any>>({
   addLabel,
   referenceData,
   selectedId,
-  onSelect,
+  onSelect
 }: BaseDataTableProps<T>) {
   const [creating, setCreating] = useState(false);
 
   // Initialize sorting hook
   const { items: sortedItems, requestSort, sortConfigs } = useSortableData(items);
+
+  // Plug in the pagination hook
+  const {
+    paginatedItems,
+    currentPage,
+    totalPages,
+    itemsPerPage,
+    setItemsPerPage,
+    setCurrentPage,
+    startIndex
+  } = usePagination(sortedItems, initialLimit);
 
   const isRefLoading = referenceData !== undefined && Object.keys(referenceData).length === 0;
 
@@ -63,14 +79,26 @@ export function BaseDataTable<T extends Record<string, any>>({
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-semibold tracking-tight">{title}</h2>
+      <Table><TableRow><TableCell><h2 className="text-xl font-semibold tracking-tight">{title}</h2></TableCell>
+        <TableCell>
+          <TablePagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            itemsPerPage={itemsPerPage}
+            totalItems={sortedItems.length}
+            startIndex={startIndex}
+            onPageChange={setCurrentPage}
+            onLimitChange={setItemsPerPage}
+          />
+        </TableCell>
+      </TableRow></Table>
 
       {isLoading ? (
         <p className="text-xs text-blue-500 animate-pulse">Fetching {title.toLowerCase()}...</p>
       ) : (
         <div className="w-full overflow-x-auto p-4 shadow-sm border rounded-lg">
           <Table>
-            <TableCaption>{caption}</TableCaption>
+            {/* <TableCaption>{caption}</TableCaption> */}
             <TableHeader>
               <TableRow className="hover:bg-transparent">
                 {fields
@@ -130,7 +158,7 @@ export function BaseDataTable<T extends Record<string, any>>({
                 />
               )}
               {/* Use sortedItems here to reflect sorting changes */}
-              {sortedItems.map((item) => (
+              {paginatedItems.map((item) => (
                 <EditableRow
                   key={item[idField]}
                   record={item}
@@ -150,6 +178,8 @@ export function BaseDataTable<T extends Record<string, any>>({
                   }
                 />
               ))}
+
+
             </TableBody>
           </Table>
         </div>
