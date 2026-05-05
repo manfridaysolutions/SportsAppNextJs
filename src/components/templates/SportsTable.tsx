@@ -48,6 +48,7 @@ return (
       addLabel="Sport"
       fields={sportFields}
       selectedId={selectedId}
+      showRowsPerPage={true}
       onSelect={onSelectSport}
    />
   );

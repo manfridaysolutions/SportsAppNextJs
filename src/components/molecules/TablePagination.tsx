@@ -27,47 +27,49 @@ export function TablePagination({
 
   if (totalItems <= initialItemsPerPage) return null;
 
-  // Calculate the end of the current range
   const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
 
   return (
-    <div className="flex items-center gap-4 text-muted-foreground">
-
-      {/* 3. Navigation Icons */}
-      <div className="flex items-center gap-0.5 border-r pl-3 h-4 border-muted-foreground/30">
+<div className="flex items-center gap-2 text-muted-foreground">
+      
+      {/* 1. Navigation & Range (Now Primary) */}
+      <div className="flex items-center gap-1">
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="p-1 hover:bg-muted rounded-md disabled:opacity-20 transition-all"
+          className="p-0.5 hover:bg-muted hover:text-foreground rounded transition-all disabled:opacity-20"
         >
           <ChevronLeft className="h-4 w-4" />
         </button>
-        {/* 1. Condensed Info Range: "1-10 of 13" */}
-        <div className="text-[11px] font-medium whitespace-nowrap">
-          <span className="text-foreground">{startIndex + 1}-{endIndex}</span>
-          <span className="mx-1">of</span>
+
+        <div className="text-[11px] font-medium whitespace-nowrap px-1">
+          <span className="text-foreground">{startIndex + 1}–{endIndex}</span>
+          <span className="mx-1 opacity-50">of</span>
           <span className="text-foreground">{totalItems}</span>
         </div>
+
         <button
           onClick={() => onPageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className="p-1 hover:bg-muted rounded-md disabled:opacity-20 transition-all"
+          disabled={currentPage === totalPages || totalPages === 0}
+          className="p-0.5 hover:bg-muted hover:text-foreground rounded transition-all disabled:opacity-20"
         >
           <ChevronRight className="h-4 w-4" />
         </button>
       </div>
-      
-      {/* 2. Rows Selector (Optional) */}
+
+      {/* 2. Rows Selector (Now Secondary with Left Border) */}
       {showRowsPerPage && (
-        <div className="flex items-center gap-1 border-l pl-4 h-4 border-muted-foreground/30">
-          <span className="text-[10px] uppercase tracking-tighter font-bold">Rows</span>
+        <div className="flex items-center gap-1.5 ml-0.5 pl-2 h-4 border-l border-muted-foreground/20">
+          <span className="text-[10px] uppercase tracking-tighter font-bold opacity-70">Rows</span>
           <select
             value={itemsPerPage}
             onChange={(e) => onLimitChange(Number(e.target.value))}
-            className="bg-transparent text-xs font-medium focus:outline-none cursor-pointer hover:text-foreground transition-colors"
+            className="bg-transparent text-[11px] font-semibold focus:outline-none cursor-pointer hover:text-foreground transition-colors appearance-none"
           >
             {[10, 20, 50].map((opt) => (
-              <option key={opt} value={opt} className="bg-background">{opt}</option>
+              <option key={opt} value={opt} className="bg-popover text-foreground">
+                {opt}
+              </option>
             ))}
           </select>
         </div>

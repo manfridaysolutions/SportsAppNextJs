@@ -27,7 +27,7 @@ export function StatDefinitionsTable({ referenceData, selectedSportId }: {
 
     return (
         <BaseDataTable
-            title="Stat Definitions"
+            title="Statistics"
             caption="A list of all statDefinitions in the system"
             items={statDefinitions}
             isLoading={isLoading}
