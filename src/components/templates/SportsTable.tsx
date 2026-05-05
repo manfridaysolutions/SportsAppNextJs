@@ -4,6 +4,8 @@ import { useSports } from "@/hooks/useSports";
 import { BaseDataTable } from "../organisms/BaseDataTable";
 import { FieldDef } from "../organisms/EditableRow";
 
+export const REF_REQUIREMENTS_SPORTS = ["SportCategory"];
+
 export function SportsTable({ referenceData, selectedId, onSelectSport }: {
   referenceData: Record<string, any[]>;
   selectedId: number | null;

@@ -1,10 +1,5 @@
 "use client";
-
-import { apiGet } from "@/lib/api";
-import { ReferenceValue } from "@/types/referencevalue";
-import { ReferenceCategory } from "@/types/referencecategory";
 import { useState, useEffect, useCallback } from "react";
-import { useReferenceCategories } from "@/hooks/useReferenceCategories";
 import { ReferenceCategoriesTable } from "@/components/templates/ReferenceCategoriesTable";
 import { ReferenceValuesTable } from "@/components/templates/ReferenceValuesTable";
 

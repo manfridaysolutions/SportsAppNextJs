@@ -4,6 +4,8 @@ import { useStatDefinitions } from "@/hooks/useStatDefinitions";
 import { BaseDataTable } from "../organisms/BaseDataTable";
 import { FieldDef } from "../organisms/EditableRow";
 
+export const REF_REQUIREMENTS_STAT_DEF = ["Statistical Unit"];
+
 export function StatDefinitionsTable({ referenceData, selectedSportId }: {
     referenceData: Record<string, any[]>;
     selectedSportId: number | null;

@@ -1,17 +1,20 @@
 "use client";
 
-import { SportsTable } from "@/components/templates/SportsTable";
-import { LeaguesTable } from "@/components/templates/LeaguesTable";
+import { SportsTable, REF_REQUIREMENTS_SPORTS } from "@/components/templates/SportsTable";
+import { LeaguesTable, REF_REQUIREMENTS_LEAGUES } from "@/components/templates/LeaguesTable";
 import { PositionsTable } from "@/components/templates/PositionsTable";
 import { StatDefinitionsTable } from "@/components/templates/StatDefinitionsTable";
 import { useState } from "react";
 import { useReferenceValuesForCategories } from "@/hooks/useReferenceValuesForCategories"
 
-const REF_KEYS = ["SportCategory", "Country", "Statistical Unit"];
+const DYNAMIC_REF_KEYS = Array.from(new Set([
+  ...REF_REQUIREMENTS_SPORTS,
+  ...REF_REQUIREMENTS_LEAGUES,
+]));
 
 export default function SportsPage() {
   const [selectedSportId, setSelectedSportId] = useState<number | null>(null);
-  const { data: referenceData = {}, isLoading: isLoadingRef } = useReferenceValuesForCategories(REF_KEYS);
+  const { data: referenceData = {}, isLoading: isLoadingRef } = useReferenceValuesForCategories(DYNAMIC_REF_KEYS);
 
   return (
     <div className="min-h-screen p-6 bg-background text-foreground transition-colors duration-300">

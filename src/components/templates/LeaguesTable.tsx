@@ -4,6 +4,8 @@ import { useLeagues } from "@/hooks/useLeagues";
 import { BaseDataTable } from "../organisms/BaseDataTable";
 import { FieldDef } from "../organisms/EditableRow";
 
+export const REF_REQUIREMENTS_LEAGUES = ["Country"];
+
 export function LeaguesTable({ referenceData, selectedSportId }: {
     referenceData: Record<string, any[]>;
     selectedSportId: number | null;

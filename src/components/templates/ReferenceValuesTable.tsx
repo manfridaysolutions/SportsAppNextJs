@@ -12,7 +12,8 @@ export function ReferenceValuesTable({ selectedReferenceCategoryId }: {
     const referenceValueFields: FieldDef[] = [
         { key: "value", label: "Value", type: "text" },
         { key: "description", label: "Description", type: "text" },
-        { key: "sort_order", label: "Sort Order", type: "number", defaultValue: 1 }
+        { key: "sort_order", label: "Sort Order", type: "number", defaultValue: 1 },
+        { key: "reference_category_id", label: "Reference Category", type: "number", visible: false, defaultValue: selectedReferenceCategoryId },
     ]
 
     return (
