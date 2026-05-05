@@ -7,6 +7,7 @@ interface PaginationProps {
   onPageChange: (page: number) => void;
   onLimitChange: (limit: number) => void;
   pageSizeOptions?: number[];
+  showRowsPerPage?: boolean; // New prop
 }
 
 export function TablePagination({
@@ -18,6 +19,7 @@ export function TablePagination({
   onPageChange,
   onLimitChange,
   pageSizeOptions = [10, 20, 50, 100],
+  showRowsPerPage = true, // Default to visible
 }: PaginationProps) {
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 py-3 border-t bg-muted/10">
@@ -32,19 +34,22 @@ export function TablePagination({
 
       {/* Right side: Controls */}
       <div className="flex items-center gap-4 order-1 sm:order-2">
-        {/* Rows per page selector */}
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-muted-foreground whitespace-nowrap">Rows per page:</span>
-          <select
-            value={itemsPerPage}
-            onChange={(e) => onLimitChange(Number(e.target.value))}
-            className="h-8 px-2 text-xs border rounded-md bg-background focus:outline-none focus:ring-1 focus:ring-ring"
-          >
-            {pageSizeOptions.map((opt) => (
-              <option key={opt} value={opt}>{opt}</option>
-            ))}
-          </select>
-        </div>
+        
+        {/* Conditional Rows per page selector */}
+        {showRowsPerPage && (
+          <div className="flex items-center gap-2 border-r pr-4 mr-2">
+            <span className="text-xs text-muted-foreground whitespace-nowrap">Rows:</span>
+            <select
+              value={itemsPerPage}
+              onChange={(e) => onLimitChange(Number(e.target.value))}
+              className="h-8 px-1 text-xs border rounded-md bg-background focus:outline-none focus:ring-1 focus:ring-ring cursor-pointer"
+            >
+              {pageSizeOptions.map((opt) => (
+                <option key={opt} value={opt}>{opt}</option>
+              ))}
+            </select>
+          </div>
+        )}
 
         {/* Navigation Buttons */}
         <div className="flex items-center gap-1">
