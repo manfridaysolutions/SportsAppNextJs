@@ -1,18 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { 
-  Table, 
-  TableBody, 
-  TableCaption, 
-  TableHeader, 
-  TableRow, 
-  TableHead 
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableHeader,
+  TableRow,
+  TableHead
 } from "../ui/table";
 import { CreateRow } from "./CreateRow";
 import { EditableRow } from "./EditableRow";
 import { AddButton } from "../atoms/ActionButtons";
-import { useSortableData } from "@/hooks/useSortableData";
+import { useSortableData,  } from "@/hooks/useSortableData";
 
 interface BaseDataTableProps<T> {
   title: string;
@@ -49,7 +49,7 @@ export function BaseDataTable<T extends Record<string, any>>({
   const [creating, setCreating] = useState(false);
 
   // Initialize sorting hook
-  const { items: sortedItems, requestSort, sortConfig } = useSortableData(items);
+  const { items: sortedItems, requestSort, sortConfigs } = useSortableData(items);
 
   const isRefLoading = referenceData !== undefined && Object.keys(referenceData).length === 0;
 
@@ -75,22 +75,38 @@ export function BaseDataTable<T extends Record<string, any>>({
               <TableRow className="hover:bg-transparent">
                 {fields
                   .filter((f) => f.visible !== false)
-                  .map((field) => (
-                    <TableHead
-                      key={field.key}
-                      onClick={() => requestSort(field.key)}
-                      className="cursor-pointer select-none hover:text-foreground transition-colors"
-                    >
-                      <div className="flex items-center gap-1">
-                        <span>{field.label}</span>
-                        <span className="text-xs w-4 text-muted-foreground">
-                          {sortConfig.key === field.key
-                            ? (sortConfig.order === "asc" ? "↑" : "↓")
-                            : "↕"}
-                        </span>
-                      </div>
-                    </TableHead>
-                  ))}
+                  .map((field) => {
+                    // Find if this field is being sorted and at what priority
+                    const sortIndex = sortConfigs.findIndex((s) => s.key === field.key);
+                    const currentSort = sortConfigs[sortIndex];
+
+                    return (
+                      <TableHead
+                        key={field.key}
+                        // Pass the shiftKey boolean to the hook
+                        onClick={(e) => requestSort(field.key, e.shiftKey)}
+                        className="cursor-pointer select-none hover:text-foreground transition-colors group"
+                      >
+                        <div className="flex items-center gap-1">
+                          <span>{field.label}</span>
+                          <div className="flex items-center text-[10px] font-mono">
+                            <span className="text-muted-foreground w-3">
+                              {currentSort
+                                ? (currentSort.order === "asc" ? "↑" : "↓")
+                                : "↕"
+                              }
+                            </span>
+                            {/* Show priority number if more than one column is sorted */}
+                            {sortConfigs.length > 1 && sortIndex !== -1 && (
+                              <span className="bg-muted px-1 rounded text-primary-foreground">
+                                {sortIndex + 1}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </TableHead>
+                    );
+                  })}
                 <TableHead className="text-right">
                   <AddButton
                     label={addLabel}
@@ -126,11 +142,10 @@ export function BaseDataTable<T extends Record<string, any>>({
                   onClick={onSelect ? () => onSelect(item[idField]) : undefined}
                   className={
                     onSelect
-                      ? `cursor-pointer transition-colors ${
-                          selectedId === item[idField]
-                            ? "bg-muted font-medium"
-                            : "hover:bg-muted/50"
-                        }`
+                      ? `cursor-pointer transition-colors ${selectedId === item[idField]
+                        ? "bg-muted font-medium"
+                        : "hover:bg-muted/50"
+                      }`
                       : ""
                   }
                 />

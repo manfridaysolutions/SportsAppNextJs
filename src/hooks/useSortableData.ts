@@ -1,53 +1,52 @@
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 
-export type SortOrder = "asc" | "desc" | null;
-
-interface SortConfig {
+export type SortConfig = {
   key: string;
-  order: SortOrder;
-}
+  order: "asc" | "desc";
+};
 
-export const useSortableData = <T,>(items: T[]) => {
-  const [sortConfig, setSortConfig] = useState<SortConfig>({
-    key: "",
-    order: null,
-  });
+export function useSortableData<T>(items: T[], config: SortConfig[] = []) {
+  const [sortConfigs, setSortConfigs] = useState<SortConfig[]>(config);
 
-  // Perform the sort whenever items or sortConfig changes
   const sortedItems = useMemo(() => {
-    const itemsCopy = [...items];
-    if (sortConfig.order && sortConfig.key) {
-      itemsCopy.sort((a: any, b: any) => {
-        const aValue = a[sortConfig.key];
-        const bValue = b[sortConfig.key];
+    let sortableItems = [...items];
+    if (sortConfigs.length > 0) {
+      sortableItems.sort((a, b) => {
+        for (const { key, order } of sortConfigs) {
+          const aValue = a[key as keyof T];
+          const bValue = b[key as keyof T];
 
-        // Handle null/undefined values so they don't break the sort
-        if (aValue === bValue) return 0;
-        if (aValue === null || aValue === undefined) return 1;
-        if (bValue === null || bValue === undefined) return -1;
-
-        if (aValue < bValue) {
-          return sortConfig.order === "asc" ? -1 : 1;
-        }
-        if (aValue > bValue) {
-          return sortConfig.order === "asc" ? 1 : -1;
+          if (aValue < bValue) return order === "asc" ? -1 : 1;
+          if (aValue > bValue) return order === "asc" ? 1 : -1;
+          // If equal, the loop continues to the next sort config
         }
         return 0;
       });
     }
-    return itemsCopy;
-  }, [items, sortConfig]);
+    return sortableItems;
+  }, [items, sortConfigs]);
 
-  // Function to toggle through Asc -> Desc -> None
-  const requestSort = (key: string) => {
-    let order: SortOrder = "asc";
-    if (sortConfig.key === key && sortConfig.order === "asc") {
-      order = "desc";
-    } else if (sortConfig.key === key && sortConfig.order === "desc") {
-      order = null;
-    }
-    setSortConfig({ key, order });
+  const requestSort = (key: string, multi: boolean = false) => {
+    setSortConfigs((prev) => {
+      const existingIndex = prev.findIndex((conf) => conf.key === key);
+      let newConfigs = [...prev];
+
+      if (existingIndex > -1) {
+        // Toggle direction
+        const currentOrder = newConfigs[existingIndex].order;
+        newConfigs[existingIndex] = {
+          key,
+          order: currentOrder === "asc" ? "desc" : "asc",
+        };
+        // If not holding shift, make this the ONLY sort
+        if (!multi) newConfigs = [newConfigs[existingIndex]];
+      } else {
+        const newRule: SortConfig = { key, order: "asc" };
+        newConfigs = multi ? [...prev, newRule] : [newRule];
+      }
+      return newConfigs;
+    });
   };
 
-  return { items: sortedItems, requestSort, sortConfig };
-};
+  return { items: sortedItems, requestSort, sortConfigs };
+}
