@@ -1,10 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { Table, TableBody, TableCaption, TableHeader, TableRow, TableHead } from "../ui/table";
+import { 
+  Table, 
+  TableBody, 
+  TableCaption, 
+  TableHeader, 
+  TableRow, 
+  TableHead 
+} from "../ui/table";
 import { CreateRow } from "./CreateRow";
 import { EditableRow } from "./EditableRow";
 import { AddButton } from "../atoms/ActionButtons";
+import { useSortableData } from "@/hooks/useSortableData";
 
 interface BaseDataTableProps<T> {
   title: string;
@@ -17,7 +25,7 @@ interface BaseDataTableProps<T> {
   onRefresh: () => void;
   fields: any[];
   addLabel: string;
-  headers?: string[];
+  headers?: string[]; // Optional: will use field labels if not provided
   referenceData?: Record<string, any[]>;
   selectedId?: number | null;
   onSelect?: (id: number) => void;
@@ -34,25 +42,24 @@ export function BaseDataTable<T extends Record<string, any>>({
   onRefresh,
   fields,
   addLabel,
-  headers,
   referenceData,
   selectedId,
   onSelect,
 }: BaseDataTableProps<T>) {
   const [creating, setCreating] = useState(false);
 
-  const refData = referenceData ?? {};
+  // Initialize sorting hook
+  const { items: sortedItems, requestSort, sortConfig } = useSortableData(items);
 
   const isRefLoading = referenceData !== undefined && Object.keys(referenceData).length === 0;
 
   if (isRefLoading) {
-    return <div className="p-4 text-sm text-muted-foreground animate-pulse">Loading required data...</div>;
+    return (
+      <div className="p-4 text-sm text-muted-foreground animate-pulse">
+        Loading required data...
+      </div>
+    );
   }
-
-  // Logic: Use provided headers, otherwise derive from visible fields
-  const displayHeaders = headers ?? fields
-    .filter((f) => f.visible !== false)
-    .map((f) => f.label);
 
   return (
     <div className="space-y-4">
@@ -66,7 +73,24 @@ export function BaseDataTable<T extends Record<string, any>>({
             <TableCaption>{caption}</TableCaption>
             <TableHeader>
               <TableRow className="hover:bg-transparent">
-                {displayHeaders.map((h) => <TableHead key={h}>{h}</TableHead>)}
+                {fields
+                  .filter((f) => f.visible !== false)
+                  .map((field) => (
+                    <TableHead
+                      key={field.key}
+                      onClick={() => requestSort(field.key)}
+                      className="cursor-pointer select-none hover:text-foreground transition-colors"
+                    >
+                      <div className="flex items-center gap-1">
+                        <span>{field.label}</span>
+                        <span className="text-xs w-4 text-muted-foreground">
+                          {sortConfig.key === field.key
+                            ? (sortConfig.order === "asc" ? "↑" : "↓")
+                            : "↕"}
+                        </span>
+                      </div>
+                    </TableHead>
+                  ))}
                 <TableHead className="text-right">
                   <AddButton
                     label={addLabel}
@@ -89,7 +113,8 @@ export function BaseDataTable<T extends Record<string, any>>({
                   fields={fields}
                 />
               )}
-              {items.map((item) => (
+              {/* Use sortedItems here to reflect sorting changes */}
+              {sortedItems.map((item) => (
                 <EditableRow
                   key={item[idField]}
                   record={item}
@@ -99,10 +124,16 @@ export function BaseDataTable<T extends Record<string, any>>({
                   fields={fields}
                   idPlaceholder={idPlaceholder}
                   onClick={onSelect ? () => onSelect(item[idField]) : undefined}
-                  className={onSelect ? `cursor-pointer transition-colors ${selectedId === item[idField] ? "bg-muted font-medium" : "hover:bg-muted/50"
-                    }` : ""}
-                >
-                </EditableRow>
+                  className={
+                    onSelect
+                      ? `cursor-pointer transition-colors ${
+                          selectedId === item[idField]
+                            ? "bg-muted font-medium"
+                            : "hover:bg-muted/50"
+                        }`
+                      : ""
+                  }
+                />
               ))}
             </TableBody>
           </Table>
