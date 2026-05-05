@@ -17,6 +17,7 @@ import { useSortableData, } from "@/hooks/useSortableData";
 import { usePagination } from "@/hooks/usePagination";
 import { useFilter } from "@/hooks/useFilter";
 import { TablePagination } from "../molecules/TablePagination";
+import { TableSortHeader } from "../molecules/TableSortHeader";
 import { SearchInput } from "../molecules/SearchInput";
 
 interface BaseDataTableProps<T> {
@@ -133,41 +134,18 @@ export function BaseDataTable<T extends Record<string, any>>({
             <Table>
               {/* <TableCaption>{caption}</TableCaption> */}
               <TableHeader>
-                <TableRow className="hover:bg-transparent">
+                <TableRow className="bg-muted/30 hover:bg-muted/30 border-b transition-none">
                   {fields
                     .filter((f) => f.visible !== false)
-                    .map((field) => {
-                      // Find if this field is being sorted and at what priority
-                      const sortIndex = sortConfigs.findIndex((s) => s.key === field.key);
-                      const currentSort = sortConfigs[sortIndex];
-
-                      return (
-                        <TableHead
-                          key={field.key}
-                          // Pass the shiftKey boolean to the hook
-                          onClick={(e) => requestSort(field.key, e.shiftKey)}
-                          className="cursor-pointer select-none hover:text-foreground transition-colors group"
-                        >
-                          <div className="flex items-center gap-1">
-                            <span>{field.label}</span>
-                            <div className="flex items-center text-[10px] font-mono">
-                              <span className="text-muted-foreground w-3">
-                                {currentSort
-                                  ? (currentSort.order === "asc" ? "↑" : "↓")
-                                  : "↕"
-                                }
-                              </span>
-                              {/* Show priority number if more than one column is sorted */}
-                              {sortConfigs.length > 1 && sortIndex !== -1 && (
-                                <span className="bg-muted px-1 rounded text-primary-foreground">
-                                  {sortIndex + 1}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </TableHead>
-                      );
-                    })}
+                    .map((field) => (
+                      <TableSortHeader
+                        key={field.key}
+                        label={field.label}
+                        sortKey={field.key}
+                        sortConfigs={sortConfigs}
+                        onSort={requestSort}
+                      />
+                  ))}
                   <TableHead className="text-right">
                     <AddButton
                       label={addLabel}

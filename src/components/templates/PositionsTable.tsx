@@ -13,7 +13,7 @@ export function PositionsTable({ selectedSportId }: {
     const positionFields: FieldDef[] = [
         { key: "position_name", label: "Name", type: "text" },
         { key: "sport_id", label: "Sport", type: "number", visible: false, defaultValue: selectedSportId },
-        { key: "position_abbreviation", label: "Abbreviaton", type: "text" },
+        { key: "position_abbreviation", label: "Abbr", type: "text" },
         { key: "description", label: "Description", type: "text" },
     ];
 

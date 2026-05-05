@@ -15,7 +15,7 @@ export function StatDefinitionsTable({ referenceData, selectedSportId }: {
     
     const statDefinitionFields: FieldDef[] = [
         { key: "stat_name", label: "Name", type: "text" },
-        { key: "stat_abbreviation", label: "Abbreviation", type: "text" },
+        { key: "stat_abbreviation", label: "Abbr", type: "text" },
         { key: "sport_id", label: "Sport", type: "number", visible: false, defaultValue: selectedSportId },
         {
             key: "stat_unit_id",
