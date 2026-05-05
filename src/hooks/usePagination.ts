@@ -20,6 +20,7 @@ export function usePagination<T>(data: T[], initialItemsPerPage: number) {
     currentPage,
     totalPages,
     itemsPerPage,
+    initialItemsPerPage, // Export this so the UI knows the "baseline"
     setItemsPerPage,
     setCurrentPage,
     next: () => setCurrentPage(p => Math.min(totalPages, p + 1)),

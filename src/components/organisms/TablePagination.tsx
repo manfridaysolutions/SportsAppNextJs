@@ -4,6 +4,7 @@ interface PaginationProps {
   currentPage: number;
   totalPages: number;
   itemsPerPage: number;
+  initialItemsPerPage: number;
   totalItems: number;
   startIndex: number;
   onPageChange: (page: number) => void;
@@ -16,6 +17,7 @@ export function TablePagination({
   currentPage,
   totalPages,
   itemsPerPage,
+  initialItemsPerPage,
   totalItems,
   startIndex, // Ensure this is passed from the hook
   onPageChange,
@@ -23,7 +25,7 @@ export function TablePagination({
   showRowsPerPage = true,
 }: PaginationProps) {
   
-  if (totalItems <= itemsPerPage) return null;
+  if (totalItems <= initialItemsPerPage) return null;
 
   // Calculate the end of the current range
   const endIndex = Math.min(startIndex + itemsPerPage, totalItems);

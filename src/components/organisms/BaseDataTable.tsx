@@ -64,6 +64,7 @@ export function BaseDataTable<T extends Record<string, any>>({
     currentPage,
     totalPages,
     itemsPerPage,
+    initialItemsPerPage,
     setItemsPerPage,
     setCurrentPage,
     startIndex
@@ -91,6 +92,7 @@ export function BaseDataTable<T extends Record<string, any>>({
             currentPage={currentPage}
             totalPages={totalPages}
             itemsPerPage={itemsPerPage}
+            initialItemsPerPage={initialItemsPerPage}
             totalItems={sortedItems.length}
             startIndex={startIndex}
             onPageChange={setCurrentPage}
