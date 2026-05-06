@@ -1,6 +1,7 @@
 "use client";
 
 import { useAthletesBySport } from "@/hooks/useAthletes";
+import { useSports } from "@/hooks/useSports";
 import { BaseDataTable } from "../organisms/BaseDataTable";
 import { FieldDef } from "../molecules/FieldDef";
 
@@ -13,6 +14,8 @@ export function AthletesTable({ sport_id, referenceData, selectedAthleteId, onSe
   onSelectAthlete?: (id: number) => void;
 }) {
   const { data: athletes = [], refetch, isLoading } = useAthletesBySport(sport_id);
+
+  const { data: sportsData = [] } = useSports();
 
   const countries = referenceData?.["Country"] ?? [];
 
@@ -31,11 +34,20 @@ export function AthletesTable({ sport_id, referenceData, selectedAthleteId, onSe
     },
     {
       key: "country_id",
-      label: "Country",
+      label: "Nationality",
       type: "select",
       options: countries.map((c) => ({
         id: c.reference_value_id,
         label: c.value,
+      })),
+    },
+    {
+      key: "athlete_sports", // Key must match the SQLModel relationship
+      label: "Sports",
+      type: "multi-select",
+      options: sportsData.map((s) => ({
+        id: s.sport_id, 
+        label: s.sport_name,
       })),
     },
     { key: "source_reference_id", label: "Source Reference", type: "number", visible: false }

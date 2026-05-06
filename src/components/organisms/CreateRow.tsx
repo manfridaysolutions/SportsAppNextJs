@@ -5,20 +5,22 @@ import { useState } from "react";
 import { TableRow, TableCell } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import {
-    Select,
-    SelectTrigger,
-    SelectContent,
-    SelectItem,
-    SelectValue,
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
 } from "@/components/ui/select";
 import { FieldDef } from "../molecules/FieldDef"
+import { ComboBoxEditor } from "../molecules/ComboBoxEditor";
+import { DatePicker } from "../molecules/DatePicker"; // Import your DatePicker
 
 interface CreateRowProps {
-    fields: FieldDef[];
-    endpoint: string;
-    onCreateSuccess: () => void;
-    onCancel: () => void;
-    idPlaceholder?: string | number;
+  fields: FieldDef[];
+  endpoint: string;
+  onCreateSuccess: () => void;
+  onCancel: () => void;
+  idPlaceholder?: string | number;
 }
 
 export function CreateRow({
@@ -28,11 +30,13 @@ export function CreateRow({
   onCancel,
   idPlaceholder = "auto",
 }: CreateRowProps) {
-  // Initialize state using defaultValue, or fallback values based on type
+  // Initialize state
   const initialState = Object.fromEntries(
     fields.map((f) => {
-      let fallback = "";
-      if (f.type === "number" || f.type === "boolean") fallback = f.defaultValue ?? 0;
+      if (f.type === "multi-select") return [f.key, []];
+      let fallback: any = "";
+      if (f.type === "number") fallback = f.defaultValue ?? 0;
+      if (f.type === "boolean") fallback = f.defaultValue ?? 0;
       return [f.key, f.defaultValue ?? fallback];
     })
   );
@@ -47,14 +51,21 @@ export function CreateRow({
   const save = async () => {
     setSaving(true);
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}${endpoint}`, {
+      // Ensure no double slashes in URL construction
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") || "";
+      const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+      
+      const response = await fetch(`${baseUrl}${cleanEndpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
+
+      if (!response.ok) throw new Error("Failed to create record");
+      
       onCreateSuccess();
     } catch (err) {
-      console.error("Create failed", err);
+      console.error("Create failed:", err);
     } finally {
       setSaving(false);
     }
@@ -63,7 +74,7 @@ export function CreateRow({
   return (
     <TableRow className="bg-muted/40">
       {idPlaceholder !== "hide" && (
-        <TableCell className="text-muted-foreground italic">
+        <TableCell className="text-muted-foreground italic text-xs">
           {idPlaceholder}
         </TableCell>
       )}
@@ -71,13 +82,14 @@ export function CreateRow({
       {fields
         .filter((f) => f.visible !== false)
         .map((field) => (
-          <TableCell key={field.key}>
+          <TableCell key={field.key} className="py-2">
             {field.editable === false && (
-              <span className="text-muted-foreground italic">auto</span>
+              <span className="text-muted-foreground italic text-xs">auto</span>
             )}
 
             {field.editable !== false && field.type === "text" && (
               <Input
+                className="h-8 text-xs"
                 value={form[field.key]}
                 onChange={(e) => update(field.key, e.target.value)}
               />
@@ -85,19 +97,26 @@ export function CreateRow({
 
             {field.editable !== false && field.type === "number" && (
               <Input
+                className="h-8 text-xs"
                 type="number"
                 value={form[field.key]}
-                onChange={(e) => update(field.key, Number(e.target.value))}
+                onChange={(e) => update(field.key, e.target.value === "" ? "" : Number(e.target.value))}
               />
             )}
 
-            {/* Generic Boolean Handler */}
+            {field.editable !== false && field.type === "date" && (
+              <DatePicker 
+                value={form[field.key]} 
+                onChange={(date) => update(field.key, date)} 
+              />
+            )}
+
             {field.editable !== false && field.type === "boolean" && (
               <Select
                 value={String(form[field.key] ?? "0")}
                 onValueChange={(v) => update(field.key, Number(v))}
               >
-                <SelectTrigger>
+                <SelectTrigger className="h-8 text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -107,30 +126,35 @@ export function CreateRow({
               </Select>
             )}
 
-            {field.editable !== false && field.type === "select" && (
-              <Select
-                value={String(form[field.key] ?? "")}
-                onValueChange={(v) => update(field.key, Number(v))}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder={`Select ${field.label}`} />
-                </SelectTrigger>
-                <SelectContent>
-                  {field.options?.map((opt) => (
-                    <SelectItem key={String(opt.id)} value={String(opt.id)}>
-                      {opt.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            {field.editable !== false && (field.type === "select" || field.type === "multi-select") && (
+              <ComboBoxEditor
+                isMulti={field.type === "multi-select"}
+                options={field.options || []}
+                value={
+                  field.type === "multi-select"
+                    ? form[field.key]?.map((s: any) => s.sport_id) || []
+                    : form[field.key]
+                }
+                onChange={(val: string | number | (string | number)[]) => {
+                  if (field.type === "multi-select" && Array.isArray(val)) {
+                    // Map to the object structure expected by SQLModel relationship
+                    const athleteSportsObjects = val.map((id) => ({
+                      sport_id: id
+                    }));
+                    update(field.key, athleteSportsObjects);
+                  } else {
+                    update(field.key, val);
+                  }
+                }}
+              />
             )}
           </TableCell>
         ))}
-      <TableCell className="text-right">
-        <EditableRowActions 
-          onSave={save} 
-          onCancel={onCancel} 
-          isSaving={saving} 
+      <TableCell className="text-right py-2">
+        <EditableRowActions
+          onSave={save}
+          onCancel={onCancel}
+          isSaving={saving}
         />
       </TableCell>
     </TableRow>

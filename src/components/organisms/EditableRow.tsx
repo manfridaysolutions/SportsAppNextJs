@@ -10,18 +10,20 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 import { apiSave, apiDelete } from "@/lib/api";
 import { EditableRowActions } from "../molecules/EditableRowActions";
 import { ReadonlyRowActions } from "../molecules/ReadonlyRowActions";
 import { DatePicker } from "../molecules/DatePicker";
 import { EditableCell } from "./EditableCell";
 import { FieldDef } from "../molecules/FieldDef"
+import { ComboBoxEditor } from "../molecules/ComboBoxEditor";
 
 interface EditableRowProps<T> {
   record: T;
   idField: keyof T;
   endpoint: string;
-  fields: FieldDef[]; // Consolidated fields prop
+  fields: FieldDef[];
   onRefresh: () => void;
   onClick?: () => void;
   className?: string;
@@ -60,11 +62,11 @@ export function EditableRow<T extends Record<string, any>>({
 
     setSaving(true);
     try {
-      // Filter out objects (like relations) to send only flat data to the API[cite: 3]
+      // FIX: Ensure multi-select arrays (objects) are NOT filtered out.
+      // We only want to exclude the ID field itself.
       const payload = Object.keys(buffer).reduce((acc, key) => {
-        const value = buffer[key as keyof T];
-        if (key !== idField && typeof value !== "object") {
-          acc[key as keyof T] = value;
+        if (key !== idField) {
+          acc[key as keyof T] = buffer[key as keyof T];
         }
         return acc;
       }, {} as Partial<T>);
@@ -101,14 +103,12 @@ export function EditableRow<T extends Record<string, any>>({
       onClick={onClick}
       className={`${className} ${isEditing ? "bg-muted/30" : "hover:bg-muted/50 transition-colors"}`}
     >
-      {/* ID Cell[cite: 1] */}
       {idPlaceholder !== "hide" && (
         <TableCell className="font-mono text-xs text-muted-foreground">
           {id}
         </TableCell>
       )}
 
-      {/* Dynamic Field Rendering */}
       {fields
         .filter((f) => f.visible !== false)
         .map((field) => (
@@ -116,31 +116,46 @@ export function EditableRow<T extends Record<string, any>>({
             <EditableCell
               isEditing={isEditing && field.editable !== false}
               value={merged[field.key]}
-              renderDisplay={() => {
-                // Generic logic for boolean display
+              renderDisplay={(value) => {
+                // FIX: Explicitly handle multi-select rendering to avoid "Object as child" error
+                if (field.type === "multi-select" && Array.isArray(value)) {
+                  return (
+                    <div className="flex flex-wrap gap-1">
+                      {value.map((rel: any) => {
+                        const opt = field.options?.find((o) => String(o.id) === String(rel.sport_id));
+                        return (
+                          <Badge key={rel.athlete_sport_id || rel.sport_id} variant="secondary" className="text-[10px] px-1 py-0 h-5">
+                            {opt ? opt.label : `ID: ${rel.sport_id}`}
+                          </Badge>
+                        );
+                      })}
+                    </div>
+                  );
+                }
+
                 if (field.type === "boolean") {
-                  return Number(merged[field.key]) === 1 ? "Yes" : "No";
+                  return Number(value) === 1 ? "Yes" : "No";
                 }
+
                 if (field.type === "select") {
-                  const opt = field.options?.find((o) => String(o.id) === String(merged[field.key]));
-                  return opt ? opt.label : (merged[field.key] ?? "N/A");
+                  const opt = field.options?.find((o) => String(o.id) === String(value));
+                  return opt ? opt.label : (value ?? "N/A");
                 }
-                return merged[field.key];
+
+                return value !== null && value !== undefined ? String(value) : "";
               }}
               renderInput={() => {
                 if (field.type === "boolean") {
-                  // 1. Determine the current value string ("1" or "0")
                   const currentValue = merged[field.key] !== undefined
                     ? String(Number(merged[field.key]))
                     : "0";
 
                   return (
                     <Select
-                      value={currentValue} // 2. This must match the <SelectItem> value exactly
+                      value={currentValue}
                       onValueChange={(val) => updateField(field.key, Number(val))}
                     >
                       <SelectTrigger className="h-8">
-                        {/* 3. SelectValue will automatically show the Label of the matched Item */}
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -150,6 +165,7 @@ export function EditableRow<T extends Record<string, any>>({
                     </Select>
                   );
                 }
+
                 if (field.type === "date") {
                   return (
                     <DatePicker
@@ -158,25 +174,38 @@ export function EditableRow<T extends Record<string, any>>({
                     />
                   );
                 }
-                if (field.type === "select") {
+
+                if (field.type === "select" || field.type === "multi-select") {
+                  const isMulti = field.type === "multi-select";
                   return (
-                    <Select
-                      value={String(merged[field.key] ?? "")}
-                      onValueChange={(val) => updateField(field.key, Number(val))}
-                    >
-                      <SelectTrigger className="h-8">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {field.options?.map((opt) => (
-                          <SelectItem key={opt.id} value={String(opt.id)}>
-                            {opt.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <ComboBoxEditor
+                      isMulti={isMulti}
+                      options={field.options || []}
+                      value={
+                        isMulti
+                          ? (merged[field.key] as any[])?.map(s => s.sport_id) || []
+                          : merged[field.key]
+                      }
+                      onChange={(val: (string | number)[]) => {
+                        const updatedRelationship = val.map(sportId => {
+                          // 1. Look in the ORIGINAL record to see if this relationship already exists
+                          const existing = (record[field.key] as any[])?.find(
+                            (s) => String(s.sport_id) === String(sportId)
+                          );
+
+                          return {
+                            // 2. If it exists, include the athlete_sport_id so the Repo recognizes it
+                            ...(existing?.athlete_sport_id && { athlete_sport_id: existing.athlete_sport_id }),
+                            sport_id: sportId,
+                            athlete_id: id // This is the 'athlete_id' from the current row
+                          };
+                        });
+                        updateField(field.key, updatedRelationship);
+                      }}
+                    />
                   );
                 }
+
                 return (
                   <Input
                     type={field.type}

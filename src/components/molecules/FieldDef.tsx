@@ -1,7 +1,7 @@
 export interface FieldDef {
     key: string;
     label: string;
-    type: "text" | "number" | "select" | "boolean" | "date"; 
+    type: "text" | "number" | "select" | "boolean" | "date" | "multi-select"; 
     options?: { id: number | string; label: string }[];
     defaultValue?: any;
     editable?: boolean;
