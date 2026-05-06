@@ -2,15 +2,15 @@
 
 import { useTeams } from "@/hooks/useTeams";
 import { BaseDataTable } from "../organisms/BaseDataTable";
-import { FieldDef } from "../organisms/EditableRow";
+import { FieldDef } from "../molecules/FieldDef";
 
 export const REF_REQUIREMENTS_TEAMS = ["City","StateProvince","Country","Venue"];
 
 export function TeamsTable({ league_Id, referenceData, selectedTeamId, onSelectTeam }: {
-  league_Id: number;
+  league_Id: number | null;
   referenceData: Record<string, any[]>;
-  selectedTeamId: number | null;
-  onSelectTeam: (id: number) => void;
+  selectedTeamId?: number | null;
+  onSelectTeam?: (id: number) => void;
 }) {
   const { data: teams = [], refetch, isLoading } = useTeams(league_Id);
 

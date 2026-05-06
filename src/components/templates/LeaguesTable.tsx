@@ -2,13 +2,15 @@
 
 import { useLeagues } from "@/hooks/useLeagues";
 import { BaseDataTable } from "../organisms/BaseDataTable";
-import { FieldDef } from "../organisms/EditableRow";
+import { FieldDef } from "../molecules/FieldDef";
 
 export const REF_REQUIREMENTS_LEAGUES = ["Country"];
 
-export function LeaguesTable({ referenceData, selectedSportId }: {
+export function LeaguesTable({ referenceData, selectedSportId, selectedLeagueId, onSelectLeague }: {
     referenceData: Record<string, any[]>;
     selectedSportId: number | null;
+    selectedLeagueId?: number | null;
+    onSelectLeague?: (id: number) => void;
 }) {
     const { data: leagues = [], refetch, isLoading } = useLeagues(selectedSportId);
     const countries = referenceData?.["Country"] ?? [];
@@ -38,6 +40,8 @@ export function LeaguesTable({ referenceData, selectedSportId }: {
             onRefresh={refetch}
             addLabel="League"
             fields={leagueFields}
+            selectedId={selectedLeagueId}
+            onSelect={onSelectLeague}
         />
     );
 }

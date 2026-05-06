@@ -34,13 +34,7 @@ export default function SportsPage() {
       />
 
       {/* Dependent Details Section */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-        {/* Leagues Column */}
-        <LeaguesTable
-          referenceData={referenceData}
-          selectedSportId={selectedSportId}
-        />
-
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
         {/* Positions Column */}
         <PositionsTable
           selectedSportId={selectedSportId}

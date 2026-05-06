@@ -2,7 +2,7 @@
 
 import { useReferenceCategories } from "@/hooks/useReferenceCategories";
 import { BaseDataTable } from "../organisms/BaseDataTable";
-import { FieldDef } from "../organisms/EditableRow";
+import { FieldDef } from "../molecules/FieldDef";
 
 export function ReferenceCategoriesTable({ selectedId, onSelectCategory }: {
   selectedId: number | null;

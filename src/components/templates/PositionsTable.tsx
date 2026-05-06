@@ -2,7 +2,7 @@
 
 import { usePositions } from "@/hooks/usePositions"
 import { BaseDataTable } from "../organisms/BaseDataTable";
-import { FieldDef } from "../organisms/EditableRow";
+import { FieldDef } from "../molecules/FieldDef";
 
 export function PositionsTable({ selectedSportId }: { 
 

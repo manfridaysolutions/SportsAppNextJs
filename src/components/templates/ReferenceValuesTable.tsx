@@ -2,7 +2,7 @@
 
 import { useReferenceValues } from "@/hooks/useReferenceValues"
 import { BaseDataTable } from "../organisms/BaseDataTable";
-import { FieldDef } from "../organisms/EditableRow";
+import { FieldDef } from "../molecules/FieldDef";
 
 export function ReferenceValuesTable({ selectedReferenceCategoryId }: {
     selectedReferenceCategoryId: number | null; // NEW: add selectedSportId to props

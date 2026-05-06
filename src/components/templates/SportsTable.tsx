@@ -8,8 +8,8 @@ export const REF_REQUIREMENTS_SPORTS = ["SportCategory"];
 
 export function SportsTable({ referenceData, selectedId, onSelectSport }: {
   referenceData: Record<string, any[]>;
-  selectedId: number | null;
-  onSelectSport: (id: number) => void;
+  selectedId?: number | null;
+  onSelectSport?: (id: number) => void;
 }) {
   const { data: sports = [], refetch, isLoading } = useSports();
   const sport_categories = referenceData?.["SportCategory"] ?? [];
