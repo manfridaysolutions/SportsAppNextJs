@@ -22,7 +22,7 @@ export function AthletesTable({ sport_id, referenceData, selectedAthleteId, onSe
     { key: "last_name", label: "Last Name", type: "text" },
     { key: "weight_lbs", label: "Weight (lbs)", type: "number" },
     { key: "height_inches", label: "Height (in.)", type: "number" },
-    { key: "birth_date", label: "Birth Date", type: "text" },
+    { key: "birth_date", label: "Birth Date", type: "date" },
     {
       key: "is_active",
       label: "Is Active",

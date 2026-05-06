@@ -13,6 +13,7 @@ import {
 import { apiSave, apiDelete } from "@/lib/api";
 import { EditableRowActions } from "../molecules/EditableRowActions";
 import { ReadonlyRowActions } from "../molecules/ReadonlyRowActions";
+import { DatePicker } from "../molecules/DatePicker";
 import { EditableCell } from "./EditableCell";
 import { FieldDef } from "../molecules/FieldDef"
 
@@ -147,6 +148,14 @@ export function EditableRow<T extends Record<string, any>>({
                         <SelectItem value="0">No</SelectItem>
                       </SelectContent>
                     </Select>
+                  );
+                }
+                if (field.type === "date") {
+                  return (
+                    <DatePicker
+                      value={merged[field.key]}
+                      onChange={(dateString) => updateField(field.key, dateString)}
+                    />
                   );
                 }
                 if (field.type === "select") {
