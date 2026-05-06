@@ -1,7 +1,6 @@
 "use client";
 
 import { ModelSelector } from "@/components/molecules/ModelSelector";
-import { useReferenceValuesForCategories } from "@/hooks/useReferenceValuesForCategories";
 import { useTeams } from "@/hooks/useTeams";
 import { useSeasons } from "@/hooks/useSeasons";
 import { useState, useEffect } from "react";
@@ -19,7 +18,6 @@ export default function TeamsPage() {
 
   const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
   const [selectedSeasonId, setSelectedSeasonId] = useState<number | null>(null);
-  const { data: referenceData = {}, isLoading: isLoadingRef } = useReferenceValuesForCategories(DYNAMIC_REF_KEYS);
 
   const { data: teams = [], refetch: refetchTeams, isLoading: isLoadingTeams } = useTeams(league_id);
   const { data: seasons = [], refetch: refetchSeasons, isLoading: isLoadingSeasons } = useSeasons(league_id);
@@ -51,7 +49,7 @@ export default function TeamsPage() {
     <div className="min-h-screen p-6 bg-background text-foreground transition-colors duration-300">
       <header className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-semibold tracking-tight">Sports Management</h1>
-        {(isLoadingRef) && (
+        {(isLoadingTeams || isLoadingSeasons) && (
           <span className="text-sm text-muted-foreground animate-pulse">Syncing...</span>
         )}
       </header>
