@@ -1,5 +1,6 @@
 "use client";
 
+import { resources } from "@/lib/resources";
 import { useReferenceCategories } from "@/hooks/useQuery";
 import { BaseDataTable } from "../organisms/BaseDataTable";
 import { FieldDef } from "../molecules/FieldDef";
@@ -28,6 +29,7 @@ export function ReferenceCategoriesTable({ selectedReferenceCategory, onSelectCa
       fields={referenceCategoryFields}
       endpoint="/api/v1/reference-categories/"
       onRefresh={refetch}
+      invalidateKey={resources.referenceCategories.key}
       addLabel="Category"
       selectedId={selectedReferenceCategory?.reference_category_id}
       onSelect={onSelectCategory}

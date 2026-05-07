@@ -1,5 +1,6 @@
 "use client";
 
+import { resources } from "@/lib/resources";
 import { useSeasons } from "@/hooks/useQuery";
 import { BaseDataTable } from "../organisms/BaseDataTable";
 import { FieldDef } from "../molecules/FieldDef";
@@ -36,6 +37,7 @@ return (
       idPlaceholder="hide"
       endpoint="/api/v1/season/"
       onRefresh={refetch}
+      invalidateKey={resources.seasons.byLeague(league_id).key}
       addLabel="Season"
       fields={seasonFields}
    />

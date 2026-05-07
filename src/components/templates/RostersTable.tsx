@@ -1,5 +1,6 @@
 "use client";
 
+import { resources } from "@/lib/resources";
 import { useRosters } from "@/hooks/useQuery";
 import { BaseDataTable } from "../organisms/BaseDataTable";
 import { FieldDef } from "../molecules/FieldDef";
@@ -37,6 +38,7 @@ return (
       idPlaceholder="hide"
       endpoint="/api/v1/roster/"
       onRefresh={refetch}
+      invalidateKey={resources.rosters.bySeasonAndTeam(season_id, team_id).key}
       addLabel="Player"
       fields={rosterFields}
    />

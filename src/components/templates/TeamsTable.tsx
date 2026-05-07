@@ -1,13 +1,12 @@
 "use client";
 
+import { resources } from "@/lib/resources";
 import { useTeams } from "@/hooks/useQuery";
 import { BaseDataTable } from "../organisms/BaseDataTable";
 import { FieldDef } from "../molecules/FieldDef";
 
 import { Team } from "@/types/team"
 import { League } from "@/types/league"
-
-import { resources } from "@/lib/resources";
 
 export const REF_REQUIREMENTS_TEAMS = ["City","StateProvince","Country","Venue"];
 

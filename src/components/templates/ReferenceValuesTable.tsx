@@ -1,5 +1,6 @@
 "use client";
 
+import { resources } from "@/lib/resources";
 import { useReferenceValues } from "@/hooks/useQuery"
 import { BaseDataTable } from "../organisms/BaseDataTable";
 import { FieldDef } from "../molecules/FieldDef";
@@ -30,6 +31,7 @@ export function ReferenceValuesTable({ reference_Category }: {
             idPlaceholder="hide"
             endpoint="/api/v1/reference-values/"
             onRefresh={refetch}
+            invalidateKey={resources.referenceValues.byCategory(reference_category_id).key}
             addLabel="Value"
             fields={referenceValueFields}
         />

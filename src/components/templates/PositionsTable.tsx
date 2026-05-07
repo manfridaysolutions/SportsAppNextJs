@@ -1,5 +1,6 @@
 "use client";
 
+import { resources } from "@/lib/resources";
 import { usePositions } from "@/hooks/useQuery"
 import { BaseDataTable } from "../organisms/BaseDataTable";
 import { FieldDef } from "../molecules/FieldDef";
@@ -29,6 +30,7 @@ export function PositionsTable({ sport }: {
             idPlaceholder="hide"
             endpoint="/api/v1/position/"
             onRefresh={refetch}
+            invalidateKey={resources.positions.bySport(sport_id).key}
             addLabel="Position"
             fields={positionFields}
        />

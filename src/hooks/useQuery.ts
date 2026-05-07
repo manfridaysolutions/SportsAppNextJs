@@ -55,7 +55,7 @@ export function usePositions(sport_id: number | null) {
 }
 
 export function useReferenceCategories() {
-  const { key, endpoint } = resources.referenceCategories.list();
+  const { key, endpoint } = resources.referenceCategories;
 
   return useQuery({
     queryKey: key,
@@ -112,7 +112,7 @@ export function useSeasons(league_id: number | null) {
 }
 
 export function useSports() {
-  const { key, endpoint } = resources.sports.list();
+  const { key, endpoint } = resources.sports;
 
   return useQuery({
     queryKey: key,

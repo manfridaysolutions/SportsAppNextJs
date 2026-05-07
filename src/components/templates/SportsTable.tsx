@@ -1,5 +1,6 @@
 "use client";
 
+import { resources } from "@/lib/resources";
 import { useSports } from "@/hooks/useQuery";
 import { BaseDataTable } from "../organisms/BaseDataTable";
 import { FieldDef } from "../molecules/FieldDef";
@@ -47,6 +48,7 @@ return (
       idPlaceholder="hide"
       endpoint="/api/v1/sports/"
       onRefresh={refetch}
+      invalidateKey={resources.sports.key}
       addLabel="Sport"
       fields={sportFields}
       selectedId={selectedSport?.sport_id}

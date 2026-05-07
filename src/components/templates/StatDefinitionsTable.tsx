@@ -1,5 +1,6 @@
 "use client";
 
+import { resources } from "@/lib/resources";
 import { useStatDefinitions } from "@/hooks/useQuery"
 import { BaseDataTable } from "../organisms/BaseDataTable";
 import { FieldDef } from "../molecules/FieldDef"
@@ -38,6 +39,7 @@ export function StatDefinitionsTable({ sport, referenceData }: {
             idPlaceholder="hide"
             endpoint="/api/v1/statDefinition/"
             onRefresh={refetch}
+            invalidateKey={resources.statDefinitions.bySport(sport_id).key}
             addLabel="Stat"
             fields={statDefinitionFields}
        />

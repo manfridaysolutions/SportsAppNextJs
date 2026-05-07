@@ -32,11 +32,6 @@ export const resources = {
   referenceCategories: {
     key: ['referenceCategories'] as const,
     endpoint: `${BASE_URL}/reference-categories/`,
-        // Identity/Location for the list (e.g., in a dropdown or main table)
-    list: () => ({
-      key: ['referenceCategories', 'list'] as const,
-      endpoint: `${BASE_URL}/reference-categories/`,
-    }),
     // New Resource for fetching multiple categories by name
     byNames: (names: string[]) => ({
       // We sort the names to ensure the queryKey is stable regardless of array order
@@ -75,12 +70,6 @@ export const resources = {
     // Identity for the entire sports domain
     key: ['sports'] as const,
     endpoint: `${BASE_URL}/sports/`,
-    
-    // Identity/Location for the list (e.g., in a dropdown or main table)
-    list: () => ({
-      key: ['sport', 'list'] as const,
-      endpoint: `${BASE_URL}/sports/`,
-    }),
 
     // Identity/Location for a specific sport by ID
     detail: (id: number | null) => ({
