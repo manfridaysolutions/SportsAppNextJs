@@ -84,7 +84,7 @@ return (
       caption="A list of all sports in the system"
       items={teams}
       isLoading={isLoading} // Assuming sports are passed in as props, loading handled by parent
-      idField="team_id"
+      idField={resources.teams.idField}
       idPlaceholder="hide"
       endpoint={resources.teams.endpoint}
       onRefresh={refetch}

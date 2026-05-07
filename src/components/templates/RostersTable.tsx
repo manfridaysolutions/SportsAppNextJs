@@ -34,9 +34,9 @@ return (
       caption="A list of all sports in the system"
       items={rosters}
       isLoading={isLoading} // Assuming sports are passed in as props, loading handled by parent
-      idField="roster_id"
+      idField={resources.rosters.idField}
       idPlaceholder="hide"
-      endpoint="/api/v1/roster/"
+      endpoint={resources.rosters.endpoint}
       onRefresh={refetch}
       invalidateKey={resources.rosters.bySeasonAndTeam(season_id, team_id).key}
       addLabel="Player"

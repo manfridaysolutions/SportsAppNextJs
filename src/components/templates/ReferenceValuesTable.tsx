@@ -27,9 +27,9 @@ export function ReferenceValuesTable({ reference_Category }: {
             caption="A list of all reference values in the system"
             items={referenceValues}
             isLoading={isLoading} // Assuming sports are passed in as props, loading handled by parent
-            idField="reference_value_id"
+            idField={resources.referenceValues.idField}
             idPlaceholder="hide"
-            endpoint="/api/v1/reference-values/"
+            endpoint={resources.referenceValues.endpoint}
             onRefresh={refetch}
             invalidateKey={resources.referenceValues.byCategory(reference_category_id).key}
             addLabel="Value"

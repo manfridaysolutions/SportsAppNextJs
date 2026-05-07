@@ -39,9 +39,9 @@ export function LeaguesTable({ sport, referenceData, selectedLeague, onSelectLea
             caption="A list of all leagues in the system"
             items={leagues}
             isLoading={isLoading}
-            idField="league_id"
+            idField={resources.leagues.idField}
             idPlaceholder="hide"
-            endpoint="/api/v1/league/"
+            endpoint={resources.leagues.endpoint}
             onRefresh={refetch}
             invalidateKey={resources.leagues.bySport(sport_id).key}
             addLabel="League"

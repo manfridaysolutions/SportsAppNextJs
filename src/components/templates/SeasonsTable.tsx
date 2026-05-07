@@ -33,9 +33,9 @@ return (
       caption="A list of all sports in the system"
       items={seasons}
       isLoading={isLoading} // Assuming sports are passed in as props, loading handled by parent
-      idField="season_id"
+      idField={resources.seasons.idField}
       idPlaceholder="hide"
-      endpoint="/api/v1/season/"
+      endpoint={resources.seasons.endpoint}
       onRefresh={refetch}
       invalidateKey={resources.seasons.byLeague(league_id).key}
       addLabel="Season"

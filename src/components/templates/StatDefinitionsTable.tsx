@@ -35,9 +35,9 @@ export function StatDefinitionsTable({ sport, referenceData }: {
             caption="A list of all statDefinitions in the system"
             items={statDefinitions}
             isLoading={isLoading}
-            idField="stat_def_id"
+            idField={resources.statDefinitions.idField}
             idPlaceholder="hide"
-            endpoint="/api/v1/statDefinition/"
+            endpoint={resources.statDefinitions.endpoint}
             onRefresh={refetch}
             invalidateKey={resources.statDefinitions.bySport(sport_id).key}
             addLabel="Stat"

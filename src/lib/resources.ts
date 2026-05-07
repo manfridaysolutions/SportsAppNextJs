@@ -2,6 +2,7 @@ const BASE_URL = "/api/v1";
 
 export const resources = {
   athletes: {
+    idField: 'athlete_id',
     key: ['athletes'] as const,
     endpoint: `${BASE_URL}/athlete/`,
     bySport: (sportId: number | null) => ({
@@ -10,6 +11,7 @@ export const resources = {
     }),
   },
   leagues: {
+    idField: 'league_id',
     key: ['leagues'] as const,
     endpoint: `${BASE_URL}/league/`,
     bySport: (sportId: number | null) => ({
@@ -22,6 +24,7 @@ export const resources = {
     }),
   },
   positions: {
+    idField: 'position_id',
     key: ['positions'] as const,
     endpoint: `${BASE_URL}/position/`,
     bySport: (sportId: number | null) => ({
@@ -30,6 +33,7 @@ export const resources = {
     }),
   },
   referenceCategories: {
+    idField: 'reference_category_id',
     key: ['referenceCategories'] as const,
     endpoint: `${BASE_URL}/reference-categories/`,
     // New Resource for fetching multiple categories by name
@@ -42,6 +46,7 @@ export const resources = {
     }),
   },
   referenceValues: {
+    idField: 'reference_value_id',
     key: ['referenceValues'] as const,
     endpoint: `${BASE_URL}/reference-values/`,
     byCategory: (reference_category_id: number | null) => ({
@@ -50,6 +55,7 @@ export const resources = {
     }),
   },
   rosters: {
+    idField: 'roster_id',
     key: ['rosters'] as const,
     endpoint: `${BASE_URL}/roster/`,
     // Identity and Location for the roster filtered by season and team
@@ -59,6 +65,7 @@ export const resources = {
     }),
   },
   seasons: {
+    idField: 'season_id',
     key: ['seasons'] as const,
     endpoint: `${BASE_URL}/season/`,
     byLeague: (league_id: number | null) => ({
@@ -67,7 +74,7 @@ export const resources = {
     }),
   },
   sports: {
-    // Identity for the entire sports domain
+    idField: 'sport_id',
     key: ['sports'] as const,
     endpoint: `${BASE_URL}/sports/`,
 
@@ -78,6 +85,7 @@ export const resources = {
     }),
   },
   statDefinitions: {
+    idField: 'stat_def_id',
     key: ['statDefinitions'] as const,
     endpoint: `${BASE_URL}/season/`,
     bySport: (sport_id: number | null) => ({
@@ -86,6 +94,7 @@ export const resources = {
     }),
   },
   teams: {
+    idField: 'team_id',
     key: ['teams'] as const,
     endpoint: `${BASE_URL}/team/`,
     byLeague: (leagueId: number | null) => ({

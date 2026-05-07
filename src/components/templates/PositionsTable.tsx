@@ -26,9 +26,9 @@ export function PositionsTable({ sport }: {
             caption="A list of all positions in the system"
             items={positions}
             isLoading={isLoading}
-            idField="position_id"
+            idField={resources.positions.idField}
             idPlaceholder="hide"
-            endpoint="/api/v1/position/"
+            endpoint={resources.positions.endpoint}
             onRefresh={refetch}
             invalidateKey={resources.positions.bySport(sport_id).key}
             addLabel="Position"

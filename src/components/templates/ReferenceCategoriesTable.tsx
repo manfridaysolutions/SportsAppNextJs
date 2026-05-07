@@ -24,10 +24,10 @@ export function ReferenceCategoriesTable({ selectedReferenceCategory, onSelectCa
       caption="A list of all reference categories in the system"
       items={referenceCategories}
       isLoading={isLoading} // Assuming sports are passed in as props, loading handled by parent
-      idField="reference_category_id"
+      idField={resources.referenceCategories.idField}
       idPlaceholder="hide"
       fields={referenceCategoryFields}
-      endpoint="/api/v1/reference-categories/"
+      endpoint={resources.referenceCategories.endpoint}
       onRefresh={refetch}
       invalidateKey={resources.referenceCategories.key}
       addLabel="Category"
