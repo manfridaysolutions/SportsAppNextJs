@@ -3,8 +3,10 @@ import { useState, useEffect, useCallback } from "react";
 import { ReferenceCategoriesTable } from "@/components/templates/ReferenceCategoriesTable";
 import { ReferenceValuesTable } from "@/components/templates/ReferenceValuesTable";
 
+import { ReferenceCategory } from "@/types/referencecategory";
+
 export default function ReferencesPage() {
-    const [selectedReferenceCategoryId, setSelectedReferenceCategoryId] = useState<number | null>(null);
+    const [selectedReferenceCategory, setSelectedReferenceCategory] = useState<ReferenceCategory | null>(null);
 
     return (
         <div className="min-h-screen p-6 bg-background text-foreground transition-colors duration-300">
@@ -13,11 +15,11 @@ export default function ReferencesPage() {
             </header>
             <div className="grid grid-cols-1 md:grid-cols-[1fr_3fr] gap-6 items-start">
                 <ReferenceCategoriesTable
-                    onSelectCategory={(id) => setSelectedReferenceCategoryId(id)}
-                    selectedId={selectedReferenceCategoryId}
+                    onSelectCategory={(referenceCategory) => setSelectedReferenceCategory(referenceCategory)}
+                    selectedReferenceCategory={selectedReferenceCategory}
                 />
                 <ReferenceValuesTable
-                    selectedReferenceCategoryId={selectedReferenceCategoryId}
+                    reference_Category={selectedReferenceCategory}
                 />
             </div>
         </div>

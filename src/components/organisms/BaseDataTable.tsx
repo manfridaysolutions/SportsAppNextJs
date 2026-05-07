@@ -36,7 +36,7 @@ interface BaseDataTableProps<T> {
   referenceData?: Record<string, any[]>;
   selectedId?: number | null;
   showRowsPerPage?: boolean; // Pass-through prop
-  onSelect?: (id: number) => void;
+  onSelect?: (item: T) => void;
 }
 
 export function BaseDataTable<T extends Record<string, any>>({
@@ -178,7 +178,7 @@ export function BaseDataTable<T extends Record<string, any>>({
                     onRefresh={onRefresh}
                     fields={fields}
                     idPlaceholder={idPlaceholder}
-                    onClick={onSelect ? () => onSelect(item[idField]) : undefined}
+                    onClick={onSelect ? () => onSelect(item) : undefined}
                     className={
                       onSelect
                         ? `cursor-pointer transition-colors ${selectedId === item[idField]

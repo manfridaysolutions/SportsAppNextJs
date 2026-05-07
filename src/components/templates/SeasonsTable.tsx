@@ -4,10 +4,14 @@ import { useSeasons } from "@/hooks/useSeasons";
 import { BaseDataTable } from "../organisms/BaseDataTable";
 import { FieldDef } from "../molecules/FieldDef";
 
-export function SeasonsTable({ league_Id }: {
-  league_Id: number | null;
+import { League } from "@/types/league"
+
+export function SeasonsTable({ league }: {
+  league: League | null;
 }) {
-  const { data: seasons = [], refetch, isLoading } = useSeasons(league_Id);
+  const league_id = league?.league_id ?? null;
+
+  const { data: seasons = [], refetch, isLoading } = useSeasons(league_id);
 
   const seasonFields: FieldDef[] = [
     { key: "season_year", label: "Season", type: "text" },
@@ -19,7 +23,7 @@ export function SeasonsTable({ league_Id }: {
       type: "boolean",
       defaultValue: 1,
     },
-    { key: "league_id", label: "League", type: "number", visible: false, defaultValue: league_Id}
+    { key: "league_id", label: "League", type: "number", visible: false, defaultValue: league_id}
   ];
 
 return (

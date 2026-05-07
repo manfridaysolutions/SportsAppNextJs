@@ -4,9 +4,11 @@ import { useReferenceCategories } from "@/hooks/useReferenceCategories";
 import { BaseDataTable } from "../organisms/BaseDataTable";
 import { FieldDef } from "../molecules/FieldDef";
 
-export function ReferenceCategoriesTable({ selectedId, onSelectCategory }: {
-  selectedId: number | null;
-  onSelectCategory: (id: number) => void;
+import { ReferenceCategory } from "@/types/referencecategory";
+
+export function ReferenceCategoriesTable({ selectedReferenceCategory, onSelectCategory }: {
+  selectedReferenceCategory: ReferenceCategory | null;
+  onSelectCategory: (referenceCategory: ReferenceCategory) => void;
 }) {
   const { data: referenceCategories = [], refetch, isLoading } = useReferenceCategories();
 
@@ -27,7 +29,7 @@ export function ReferenceCategoriesTable({ selectedId, onSelectCategory }: {
       endpoint="/api/v1/reference-categories/"
       onRefresh={refetch}
       addLabel="Category"
-      selectedId={selectedId}
+      selectedId={selectedReferenceCategory?.reference_category_id}
       onSelect={onSelectCategory}
     />
   );

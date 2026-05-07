@@ -4,15 +4,19 @@ import { useAthletesBySport } from "@/hooks/useAthletes";
 import { useSports } from "@/hooks/useSports";
 import { BaseDataTable } from "../organisms/BaseDataTable";
 import { FieldDef } from "../molecules/FieldDef";
+import { Sport } from "@/types/sport"
+import { Athlete } from "@/types/athlete";
 
 export const REF_REQUIREMENTS_ATHLETES = ["Country"];
 
-export function AthletesTable({ sport_id, referenceData, selectedAthleteId, onSelectAthlete }: {
-  sport_id: number | null;
+export function AthletesTable({ sport, referenceData, selectedAthlete, onSelectAthlete }: {
+  sport: Sport | null;
   referenceData: Record<string, any[]>;
-  selectedAthleteId?: number | null;
-  onSelectAthlete?: (id: number) => void;
+  selectedAthlete?: Athlete | null;
+  onSelectAthlete?: (athlete: Athlete) => void;
 }) {
+  const sport_id = sport?.sport_id ?? null;
+
   const { data: athletes = [], refetch, isLoading } = useAthletesBySport(sport_id);
 
   const { data: sportsData = [] } = useSports();
@@ -65,8 +69,6 @@ return (
       onRefresh={refetch}
       addLabel="Athlete"
       fields={athleteFields}
-      // selectedId={selectedTeamId}
-      // onSelect={onSelectTeam}
    />
   );
 }

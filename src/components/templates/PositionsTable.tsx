@@ -3,16 +3,18 @@
 import { usePositions } from "@/hooks/usePositions"
 import { BaseDataTable } from "../organisms/BaseDataTable";
 import { FieldDef } from "../molecules/FieldDef";
+import { Sport } from "@/types/sport";
 
-export function PositionsTable({ selectedSportId }: { 
-
-    selectedSportId: number | null 
+export function PositionsTable({ sport }: { 
+    sport: Sport | null;
 }) {
-    const { data: positions = [], refetch, isLoading } = usePositions(selectedSportId);
+    const sport_id = sport?.sport_id ?? null;
+
+    const { data: positions = [], refetch, isLoading } = usePositions(sport_id);    
 
     const positionFields: FieldDef[] = [
         { key: "position_name", label: "Name", type: "text" },
-        { key: "sport_id", label: "Sport", type: "number", visible: false, defaultValue: selectedSportId },
+        { key: "sport_id", label: "Sport", type: "number", visible: false, defaultValue: sport_id },
         { key: "position_abbreviation", label: "Abbr", type: "text" },
         { key: "description", label: "Description", type: "text" },
     ];

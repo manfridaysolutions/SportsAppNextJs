@@ -7,7 +7,10 @@ import { LeaguesTable, REF_REQUIREMENTS_LEAGUES } from "@/components/templates/L
 import { TeamsTable, REF_REQUIREMENTS_TEAMS } from "@/components/templates/TeamsTable";
 import { SeasonsTable } from "@/components/templates/SeasonsTable";
 
+import { League } from "@/types/league"
+
 import { useSearchParams } from "next/navigation";
+import { useSportById } from "@/hooks/useSports";
 
 const DYNAMIC_REF_KEYS = Array.from(new Set([
   ...REF_REQUIREMENTS_LEAGUES,
@@ -19,7 +22,9 @@ export default function LeaguesPage() {
 
   const sport_id = Number(searchParams.get("sport_id"));
 
-  const [selectedLeagueId, setSelectedLeagueId] = useState<number | null>(null);
+  const sport = useSportById(sport_id);
+
+  const [selectedLeague, setSelectedLeague] = useState<League | null>(null);
   const { data: referenceData = {}, isLoading: isLoadingRef } = useReferenceValuesForCategories(DYNAMIC_REF_KEYS);
 
   return (
@@ -33,20 +38,20 @@ export default function LeaguesPage() {
 
       <LeaguesTable
         referenceData={referenceData}
-        selectedSportId={sport_id ?? 1}
-        onSelectLeague={(id) => setSelectedLeagueId(id)}
-        selectedLeagueId={selectedLeagueId}
+        sport={sport}
+        onSelectLeague={(league) => setSelectedLeague(league)}
+        selectedLeague={selectedLeague}
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
 
         <TeamsTable
-          league_Id={selectedLeagueId}
+          league={selectedLeague}
           referenceData={referenceData}
         />
 
         <SeasonsTable
-          league_Id={selectedLeagueId}
+          league={selectedLeague}
         />
       </div>
     </div>

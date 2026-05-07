@@ -4,16 +4,20 @@ import { useReferenceValues } from "@/hooks/useReferenceValues"
 import { BaseDataTable } from "../organisms/BaseDataTable";
 import { FieldDef } from "../molecules/FieldDef";
 
-export function ReferenceValuesTable({ selectedReferenceCategoryId }: {
-    selectedReferenceCategoryId: number | null; // NEW: add selectedSportId to props
+import { ReferenceCategory } from "@/types/referencecategory";
+
+export function ReferenceValuesTable({ reference_Category }: {
+    reference_Category: ReferenceCategory | null; // NEW: add selectedSportId to props
 }) {
-    const { data: referenceValues = [], refetch, isLoading } = useReferenceValues(selectedReferenceCategoryId);
+    const reference_category_id = reference_Category?.reference_category_id ?? null;
+
+    const { data: referenceValues = [], refetch, isLoading } = useReferenceValues(reference_category_id);
 
     const referenceValueFields: FieldDef[] = [
         { key: "value", label: "Value", type: "text" },
         { key: "description", label: "Description", type: "text" },
         { key: "sort_order", label: "Sort Order", type: "number", defaultValue: 1 },
-        { key: "reference_category_id", label: "Reference Category", type: "number", visible: false, defaultValue: selectedReferenceCategoryId },
+        { key: "reference_category_id", label: "Reference Category", type: "number", visible: false, defaultValue: reference_category_id },
     ]
 
     return (
@@ -26,9 +30,8 @@ export function ReferenceValuesTable({ selectedReferenceCategoryId }: {
             idPlaceholder="hide"
             endpoint="/api/v1/reference-values/"
             onRefresh={refetch}
-            fields={referenceValueFields}
             addLabel="Value"
-            selectedId={selectedReferenceCategoryId}
+            fields={referenceValueFields}
         />
    );
 }

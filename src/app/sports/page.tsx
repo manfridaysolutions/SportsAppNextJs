@@ -7,6 +7,8 @@ import { StatDefinitionsTable, REF_REQUIREMENTS_STAT_DEF} from "@/components/tem
 import { useState } from "react";
 import { useReferenceValuesForCategories } from "@/hooks/useReferenceValuesForCategories"
 
+import { Sport } from "@/types/sport"
+
 const DYNAMIC_REF_KEYS = Array.from(new Set([
   ...REF_REQUIREMENTS_SPORTS,
   ...REF_REQUIREMENTS_LEAGUES,
@@ -14,7 +16,8 @@ const DYNAMIC_REF_KEYS = Array.from(new Set([
 ]));
 
 export default function SportsPage() {
-  const [selectedSportId, setSelectedSportId] = useState<number | null>(null);
+  const [selectedSport, setSelectedSport] = useState<Sport | null>(null);
+
   const { data: referenceData = {}, isLoading: isLoadingRef } = useReferenceValuesForCategories(DYNAMIC_REF_KEYS);
 
   return (
@@ -29,21 +32,21 @@ export default function SportsPage() {
       {/* Main Sports Table Section */}
       <SportsTable
         referenceData={referenceData}
-        onSelectSport={(id) => setSelectedSportId(id)}
-        selectedId={selectedSportId}
+        onSelectSport={(sport) => setSelectedSport(sport)}
+        selectedSport={selectedSport}
       />
 
       {/* Dependent Details Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
         {/* Positions Column */}
         <PositionsTable
-          selectedSportId={selectedSportId}
+          sport={selectedSport}
         />
 
         {/* Stat Definitions Column */}
         <StatDefinitionsTable
           referenceData={referenceData}
-          selectedSportId={selectedSportId}
+          sport={selectedSport}
         />
       </div>
     </div>

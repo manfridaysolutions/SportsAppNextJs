@@ -2,14 +2,16 @@
 
 import { useSports } from "@/hooks/useSports";
 import { BaseDataTable } from "../organisms/BaseDataTable";
-import { FieldDef } from "../molecules/FieldDef"
+import { FieldDef } from "../molecules/FieldDef";
+
+import { Sport } from "@/types/sport";
 
 export const REF_REQUIREMENTS_SPORTS = ["SportCategory"];
 
-export function SportsTable({ referenceData, selectedId, onSelectSport }: {
+export function SportsTable({ referenceData, selectedSport, onSelectSport }: {
   referenceData: Record<string, any[]>;
-  selectedId?: number | null;
-  onSelectSport?: (id: number) => void;
+  selectedSport?: Sport | null;
+  onSelectSport?: (sport: Sport) => void;
 }) {
   const { data: sports = [], refetch, isLoading } = useSports();
   const sport_categories = referenceData?.["SportCategory"] ?? [];
@@ -47,7 +49,7 @@ return (
       onRefresh={refetch}
       addLabel="Sport"
       fields={sportFields}
-      selectedId={selectedId}
+      selectedId={selectedSport?.sport_id}
       showRowsPerPage={true}
       onSelect={onSelectSport}
    />

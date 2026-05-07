@@ -3,16 +3,20 @@
 import { useLeaguesBySport } from "@/hooks/useLeagues";
 import { BaseDataTable } from "../organisms/BaseDataTable";
 import { FieldDef } from "../molecules/FieldDef";
+import { Sport } from "@/types/sport";
+import { League } from "@/types/league";
 
 export const REF_REQUIREMENTS_LEAGUES = ["Country"];
 
-export function LeaguesTable({ referenceData, selectedSportId, selectedLeagueId, onSelectLeague }: {
+export function LeaguesTable({ sport, referenceData, selectedLeague, onSelectLeague }: {
+    sport: Sport | null;
     referenceData: Record<string, any[]>;
-    selectedSportId: number | null;
-    selectedLeagueId?: number | null;
-    onSelectLeague?: (id: number) => void;
+    selectedLeague?: League | null;
+    onSelectLeague?: (league: League) => void;
 }) {
-    const { data: leagues = [], refetch, isLoading } = useLeaguesBySport(selectedSportId);
+    const sport_id = sport?.sport_id ?? null;
+
+    const { data: leagues = [], refetch, isLoading } = useLeaguesBySport(sport_id);
     const countries = referenceData?.["Country"] ?? [];
 
     const leagueFields: FieldDef[] = [
@@ -25,7 +29,7 @@ export function LeaguesTable({ referenceData, selectedSportId, selectedLeagueId,
             options: countries.map((c) => ({ id: c.reference_value_id, label: c.value })),
         },
         // This remains hidden in UI but can be used for API defaults
-        { key: "sport_id", label: "Sport", type: "number", visible: false, defaultValue: selectedSportId },
+        { key: "sport_id", label: "Sport", type: "number", visible: false, defaultValue: sport_id },
     ];
 
     return (
@@ -40,7 +44,7 @@ export function LeaguesTable({ referenceData, selectedSportId, selectedLeagueId,
             onRefresh={refetch}
             addLabel="League"
             fields={leagueFields}
-            selectedId={selectedLeagueId}
+            selectedId={selectedLeague?.league_id}
             onSelect={onSelectLeague}
         />
     );

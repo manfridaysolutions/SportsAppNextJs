@@ -4,15 +4,20 @@ import { useTeams } from "@/hooks/useTeams";
 import { BaseDataTable } from "../organisms/BaseDataTable";
 import { FieldDef } from "../molecules/FieldDef";
 
+import { Team } from "@/types/team"
+import { League } from "@/types/league"
+
 export const REF_REQUIREMENTS_TEAMS = ["City","StateProvince","Country","Venue"];
 
-export function TeamsTable({ league_Id, referenceData, selectedTeamId, onSelectTeam }: {
-  league_Id: number | null;
+export function TeamsTable({ league, referenceData, selectedTeam, onSelectTeam }: {
+  league: League | null;
   referenceData: Record<string, any[]>;
-  selectedTeamId?: number | null;
-  onSelectTeam?: (id: number) => void;
+  selectedTeam?: Team | null;
+  onSelectTeam?: (team: Team) => void;
 }) {
-  const { data: teams = [], refetch, isLoading } = useTeams(league_Id);
+  const league_id = league?.league_id ?? null;
+
+  const { data: teams = [], refetch, isLoading } = useTeams(league_id);
 
   const cities = referenceData?.["City"] ?? [];
   const states_provinces = referenceData?.["StateProvince"] ?? [];
@@ -69,7 +74,7 @@ export function TeamsTable({ league_Id, referenceData, selectedTeamId, onSelectT
       type: "boolean",
       defaultValue: 1,
     },
-    { key: "league_id", label: "League", type: "number", visible: false, defaultValue: league_Id}
+    { key: "league_id", label: "League", type: "number", visible: false, defaultValue: league_id}
   ];
 
 return (
@@ -84,7 +89,7 @@ return (
       onRefresh={refetch}
       addLabel="Team"
       fields={teamFields}
-      selectedId={selectedTeamId}
+      selectedId={selectedTeam?.team_id}
       onSelect={onSelectTeam}
    />
   );
