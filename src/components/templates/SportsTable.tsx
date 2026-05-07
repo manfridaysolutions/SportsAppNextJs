@@ -1,6 +1,6 @@
 "use client";
 
-import { useSports } from "@/hooks/useSports";
+import { useSports } from "@/hooks/useQuery";
 import { BaseDataTable } from "../organisms/BaseDataTable";
 import { FieldDef } from "../molecules/FieldDef";
 

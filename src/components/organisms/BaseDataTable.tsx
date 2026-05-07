@@ -30,6 +30,7 @@ interface BaseDataTableProps<T> {
   idPlaceholder?: string;
   endpoint: string;
   onRefresh: () => void;
+  invalidateKey?: readonly any[]; // Added to support TanStack Query invalidation
   fields: any[];
   addLabel: string;
   headers?: string[]; // Optional: will use field labels if not provided
@@ -49,6 +50,7 @@ export function BaseDataTable<T extends Record<string, any>>({
   idPlaceholder = "auto",
   endpoint,
   onRefresh,
+  invalidateKey,
   fields,
   addLabel,
   referenceData,
@@ -164,6 +166,7 @@ export function BaseDataTable<T extends Record<string, any>>({
                       setCreating(false);
                       onRefresh();
                     }}
+                    invalidateKey={invalidateKey}
                     onCancel={() => setCreating(false)}
                     fields={fields}
                   />
@@ -176,6 +179,7 @@ export function BaseDataTable<T extends Record<string, any>>({
                     idField={idField}
                     endpoint={endpoint}
                     onRefresh={onRefresh}
+                    invalidateKey={invalidateKey}
                     fields={fields}
                     idPlaceholder={idPlaceholder}
                     onClick={onSelect ? () => onSelect(item) : undefined}

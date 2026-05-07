@@ -1,6 +1,6 @@
 "use client";
 
-import { useSeasons } from "@/hooks/useSeasons";
+import { useSeasons } from "@/hooks/useQuery";
 import { BaseDataTable } from "../organisms/BaseDataTable";
 import { FieldDef } from "../molecules/FieldDef";
 

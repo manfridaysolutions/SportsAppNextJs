@@ -1,7 +1,7 @@
 "use client";
 
-import { useAthletesBySport } from "@/hooks/useAthletes";
-import { useSports } from "@/hooks/useSports";
+import { useAthletesBySport, useSports } from "@/hooks/useQuery";
+import { resources } from "@/lib/resources";
 import { BaseDataTable } from "../organisms/BaseDataTable";
 import { FieldDef } from "../molecules/FieldDef";
 import { Sport } from "@/types/sport"
@@ -54,7 +54,7 @@ export function AthletesTable({ sport, referenceData, selectedAthlete, onSelectA
         label: s.sport_name,
       })),
     },
-    { key: "source_reference_id", label: "Source Reference", type: "number", visible: false }
+    { key: "source_reference_id", label: "Source Reference", type: "text", visible: false }
   ];
 
 return (
@@ -67,6 +67,7 @@ return (
       idPlaceholder="hide"
       endpoint="/api/v1/athlete/"
       onRefresh={refetch}
+      invalidateKey={resources.athletes.bySport(sport_id).key}
       addLabel="Athlete"
       fields={athleteFields}
    />

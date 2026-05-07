@@ -1,12 +1,10 @@
 "use client";
 
-import { useRosters } from "@/hooks/useRosters";
+import { useRosters } from "@/hooks/useQuery";
 import { BaseDataTable } from "../organisms/BaseDataTable";
 import { FieldDef } from "../molecules/FieldDef";
 import { Season } from "@/types/season";
 import { Team } from "@/types/team";
-import { useSports } from "@/hooks/useSports";
-import { usePositions } from "@/hooks/usePositions";
 
 export function RostersTable({ season, team }: {
   season: Season | null;

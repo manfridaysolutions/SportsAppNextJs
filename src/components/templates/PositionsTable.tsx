@@ -1,6 +1,6 @@
 "use client";
 
-import { usePositions } from "@/hooks/usePositions"
+import { usePositions } from "@/hooks/useQuery"
 import { BaseDataTable } from "../organisms/BaseDataTable";
 import { FieldDef } from "../molecules/FieldDef";
 import { Sport } from "@/types/sport";

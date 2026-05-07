@@ -18,6 +18,7 @@ import { DatePicker } from "../molecules/DatePicker";
 import { EditableCell } from "./EditableCell";
 import { FieldDef } from "../molecules/FieldDef"
 import { ComboBoxEditor } from "../molecules/ComboBoxEditor";
+import { useGenericMutation } from "@/hooks/useGenericMutation";
 
 interface EditableRowProps<T> {
   record: T;
@@ -25,6 +26,7 @@ interface EditableRowProps<T> {
   endpoint: string;
   fields: FieldDef[];
   onRefresh: () => void;
+  invalidateKey?: readonly any[]; // Added for TanStack Query
   onClick?: () => void;
   className?: string;
   idPlaceholder?: string;
@@ -36,50 +38,57 @@ export function EditableRow<T extends Record<string, any>>({
   endpoint,
   fields,
   onRefresh,
+  invalidateKey, // Destructure the new prop
   onClick,
   className,
   idPlaceholder = "auto",
 }: EditableRowProps<T>) {
   const [buffer, setBuffer] = useState<Partial<T>>({});
   const [isEditing, setIsEditing] = useState(false);
-  const [saving, setSaving] = useState(false);
+  // const [saving, setSaving] = useState(false);
 
   const id = record[idField] as number;
   const merged = { ...record, ...buffer };
 
+  // 1. Initialize the generic mutation
+  const { mutate: saveRecord, isPending: saving } = useGenericMutation<T>(
+    invalidateKey,
+    {
+      onSuccess: () => {
+        setBuffer({});
+        setIsEditing(false);
+        onRefresh(); // Keep onRefresh for non-query state if needed
+      },
+      onError: (error) => {
+        console.error("Save failed", error);
+      }
+    }
+  );
+
   const updateField = (field: string, value: any) => {
-    setBuffer((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+    setBuffer((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
     if (Object.keys(buffer).length === 0) {
       setIsEditing(false);
       return;
     }
 
-    setSaving(true);
-    try {
-      // FIX: Ensure multi-select arrays (objects) are NOT filtered out.
-      // We only want to exclude the ID field itself.
-      const payload = Object.keys(buffer).reduce((acc, key) => {
-        if (key !== idField) {
-          acc[key as keyof T] = buffer[key as keyof T];
-        }
-        return acc;
-      }, {} as Partial<T>);
+    // 2. Prepare the payload
+    const payload = Object.keys(buffer).reduce((acc, key) => {
+      if (key !== idField) {
+        acc[key as keyof T] = buffer[key as keyof T];
+      }
+      return acc;
+    }, {} as Partial<T>);
 
-      await apiSave(`${endpoint}${id}`, "PUT", payload);
-      setBuffer({});
-      setIsEditing(false);
-      onRefresh();
-    } catch (error) {
-      console.error("Save failed", error);
-    } finally {
-      setSaving(false);
-    }
+    // 3. Trigger the mutation
+    saveRecord({
+      path: `${endpoint}${id}`,
+      method: "PUT",
+      data: payload,
+    });
   };
 
   const handleCancel = () => {

@@ -1,6 +1,7 @@
 "use client";
 
-import { useLeaguesBySport } from "@/hooks/useLeagues";
+import { resources } from "@/lib/resources";
+import { useLeaguesBySport } from "@/hooks/useQuery";
 import { BaseDataTable } from "../organisms/BaseDataTable";
 import { FieldDef } from "../molecules/FieldDef";
 import { Sport } from "@/types/sport";
@@ -42,6 +43,7 @@ export function LeaguesTable({ sport, referenceData, selectedLeague, onSelectLea
             idPlaceholder="hide"
             endpoint="/api/v1/league/"
             onRefresh={refetch}
+            invalidateKey={resources.leagues.bySport(sport_id).key}
             addLabel="League"
             fields={leagueFields}
             selectedId={selectedLeague?.league_id}

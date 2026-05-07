@@ -1,6 +1,5 @@
 "use client";
 
-import { EditableRowActions } from "../molecules/EditableRowActions";
 import { useState } from "react";
 import { TableRow, TableCell } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
@@ -11,14 +10,17 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
-import { FieldDef } from "../molecules/FieldDef"
+import { EditableRowActions } from "../molecules/EditableRowActions";
+import { FieldDef } from "../molecules/FieldDef";
 import { ComboBoxEditor } from "../molecules/ComboBoxEditor";
-import { DatePicker } from "../molecules/DatePicker"; // Import your DatePicker
+import { DatePicker } from "../molecules/DatePicker";
+import { useGenericMutation } from "@/hooks/useGenericMutation";
 
 interface CreateRowProps {
   fields: FieldDef[];
   endpoint: string;
   onCreateSuccess: () => void;
+  invalidateKey?: readonly any[];
   onCancel: () => void;
   idPlaceholder?: string | number;
 }
@@ -27,10 +29,11 @@ export function CreateRow({
   fields,
   endpoint,
   onCreateSuccess,
+  invalidateKey,
   onCancel,
   idPlaceholder = "auto",
 }: CreateRowProps) {
-  // Initialize state
+  // 1. Initialize form state with defaults
   const initialState = Object.fromEntries(
     fields.map((f) => {
       if (f.type === "multi-select") return [f.key, []];
@@ -42,33 +45,54 @@ export function CreateRow({
   );
 
   const [form, setForm] = useState(initialState);
-  const [saving, setSaving] = useState(false);
+
+  // 2. Setup the Generic Mutation
+  const { mutate: createRecord, isPending: saving } = useGenericMutation(
+    invalidateKey,
+    {
+      onSuccess: () => {
+        onCreateSuccess();
+      },
+      onError: (err) => {
+        console.error("Create failed:", err);
+      }
+    }
+  );
 
   const update = (key: string, value: any) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
-  const save = async () => {
-    setSaving(true);
-    try {
-      // Ensure no double slashes in URL construction
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") || "";
-      const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+  const handleSave = () => {
+    // 1. Create a shallow copy to avoid mutating the live form state
+    const payload = { ...form };
 
-      const response = await fetch(`${baseUrl}${cleanEndpoint}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
+    fields.forEach((field) => {
+      const value = payload[field.key];
 
-      if (!response.ok) throw new Error("Failed to create record");
+      // Handle Empty Values for non-text fields
+      if (value === "" || value === undefined || value === null) {
+        if (field.type === "number" || field.type === "date" || field.type === "select") {
+          // Remove from payload so FastAPI doesn't try to parse "" as an int/date
+          delete payload[field.key];
+        }
+      }
+      // Ensure numeric types are actually Numbers
+      else if (field.type === "number" || field.type === "select") {
+        payload[field.key] = Number(value);
+      }
+      // Ensure Booleans are 0/1 or true/false depending on your DB preference
+      else if (field.type === "boolean") {
+        payload[field.key] = Number(value);
+      }
+    });
 
-      onCreateSuccess();
-    } catch (err) {
-      console.error("Create failed:", err);
-    } finally {
-      setSaving(false);
-    }
+    // 2. Trigger the generic mutation
+    createRecord({
+      path: endpoint,
+      method: "POST",
+      data: payload,
+    });
   };
 
   return (
@@ -130,24 +154,15 @@ export function CreateRow({
               <ComboBoxEditor
                 isMulti={field.type === "multi-select"}
                 options={field.options || []}
-                value={
-                  // 1. Just use the value directly from the form state
-                  // (Assuming form state for multi-select is now [1, 2, 3])
-                  field.type === "multi-select"
-                    ? (form[field.key] || [])
-                    : form[field.key]
-                }
-                onChange={(val: string | number | (string | number)[]) => {
-                  // 2. No more mapping to objects! Just send the raw ID or array of IDs
-                  update(field.key, val);
-                }}
+                value={form[field.key] || (field.type === "multi-select" ? [] : "")}
+                onChange={(val) => update(field.key, val)}
               />
             )}
           </TableCell>
         ))}
       <TableCell className="text-right py-2">
         <EditableRowActions
-          onSave={save}
+          onSave={handleSave}
           onCancel={onCancel}
           isSaving={saving}
         />

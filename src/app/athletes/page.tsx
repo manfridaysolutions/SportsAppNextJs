@@ -1,10 +1,9 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useReferenceValuesForCategories } from "@/hooks/useReferenceValuesForCategories";
+import {  } from "@/hooks/useQuery";
 import { ModelSelector } from "@/components/molecules/ModelSelector";
-import { useAthletesBySport } from "@/hooks/useAthletes";
-import { useSportById, useSports } from "@/hooks/useSports";
+import { useAthletesBySport, useSportDetail, useReferenceValuesForCategories } from "@/hooks/useQuery";
 
 import { AthletesTable, REF_REQUIREMENTS_ATHLETES } from "@/components/templates/AthletesTable";
 import { QuerystringValidator } from "@/components/molecules/QuerystringValidator";
@@ -19,8 +18,7 @@ export default function AthletesPage() {
     const sport_id = searchParams.get("sport_id") ? Number(searchParams.get("sport_id")) : null;
 
     // Validate the sport_id passed in exists
-    const { isLoading: isInitialLoading } = useSports(); // Check global loading
-    const sport = useSportById(sport_id);
+    const { data: sport, isLoading: isInitialLoading } = useSportDetail(sport_id); // Check global loading
 
     const { data: athletes = [], refetch, isLoading: isLoadingAthletes } = useAthletesBySport(sport_id);
     const { data: referenceData = {}, isLoading: isLoadingRef } = useReferenceValuesForCategories(DYNAMIC_REF_KEYS);

@@ -1,19 +1,19 @@
 "use client";
 
 import { ModelSelector } from "@/components/molecules/ModelSelector";
-import { useTeams } from "@/hooks/useTeams";
-import { useSeasons } from "@/hooks/useSeasons";
+import { useTeams, useSeasons } from "@/hooks/useQuery";
 import { useState, useEffect } from "react";
 import { RostersTable } from "@/components/templates/RostersTable";
 
 import { useSearchParams } from "next/navigation";
+
+import { QuerystringValidator } from "@/components/molecules/QuerystringValidator";
 
 const DYNAMIC_REF_KEYS = Array.from(new Set([
 ]));
 
 export default function TeamsPage() {
   const searchParams = useSearchParams();
-
   const league_id = Number(searchParams.get("league_id"));
 
   const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);

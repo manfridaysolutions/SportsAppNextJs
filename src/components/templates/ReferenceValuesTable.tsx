@@ -1,6 +1,6 @@
 "use client";
 
-import { useReferenceValues } from "@/hooks/useReferenceValues"
+import { useReferenceValues } from "@/hooks/useQuery"
 import { BaseDataTable } from "../organisms/BaseDataTable";
 import { FieldDef } from "../molecules/FieldDef";
 

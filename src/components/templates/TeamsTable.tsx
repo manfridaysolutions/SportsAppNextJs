@@ -1,11 +1,13 @@
 "use client";
 
-import { useTeams } from "@/hooks/useTeams";
+import { useTeams } from "@/hooks/useQuery";
 import { BaseDataTable } from "../organisms/BaseDataTable";
 import { FieldDef } from "../molecules/FieldDef";
 
 import { Team } from "@/types/team"
 import { League } from "@/types/league"
+
+import { resources } from "@/lib/resources";
 
 export const REF_REQUIREMENTS_TEAMS = ["City","StateProvince","Country","Venue"];
 
@@ -85,8 +87,9 @@ return (
       isLoading={isLoading} // Assuming sports are passed in as props, loading handled by parent
       idField="team_id"
       idPlaceholder="hide"
-      endpoint="/api/v1/team/"
+      endpoint={resources.teams.endpoint}
       onRefresh={refetch}
+      invalidateKey={resources.teams.byLeague(league_id).key}    // Specific key for this list
       addLabel="Team"
       fields={teamFields}
       selectedId={selectedTeam?.team_id}

@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import { ReferenceCategoriesTable } from "@/components/templates/ReferenceCategoriesTable";
 import { ReferenceValuesTable } from "@/components/templates/ReferenceValuesTable";
 
