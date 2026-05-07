@@ -1,6 +1,6 @@
 "use client";
 
-import { useLeagues } from "@/hooks/useLeagues";
+import { useLeaguesBySport } from "@/hooks/useLeagues";
 import { BaseDataTable } from "../organisms/BaseDataTable";
 import { FieldDef } from "../molecules/FieldDef";
 
@@ -12,7 +12,7 @@ export function LeaguesTable({ referenceData, selectedSportId, selectedLeagueId,
     selectedLeagueId?: number | null;
     onSelectLeague?: (id: number) => void;
 }) {
-    const { data: leagues = [], refetch, isLoading } = useLeagues(selectedSportId);
+    const { data: leagues = [], refetch, isLoading } = useLeaguesBySport(selectedSportId);
     const countries = referenceData?.["Country"] ?? [];
 
     const leagueFields: FieldDef[] = [

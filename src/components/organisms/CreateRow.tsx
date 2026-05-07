@@ -54,7 +54,7 @@ export function CreateRow({
       // Ensure no double slashes in URL construction
       const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") || "";
       const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
-      
+
       const response = await fetch(`${baseUrl}${cleanEndpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -62,7 +62,7 @@ export function CreateRow({
       });
 
       if (!response.ok) throw new Error("Failed to create record");
-      
+
       onCreateSuccess();
     } catch (err) {
       console.error("Create failed:", err);
@@ -105,9 +105,9 @@ export function CreateRow({
             )}
 
             {field.editable !== false && field.type === "date" && (
-              <DatePicker 
-                value={form[field.key]} 
-                onChange={(date) => update(field.key, date)} 
+              <DatePicker
+                value={form[field.key]}
+                onChange={(date) => update(field.key, date)}
               />
             )}
 
@@ -131,20 +131,15 @@ export function CreateRow({
                 isMulti={field.type === "multi-select"}
                 options={field.options || []}
                 value={
+                  // 1. Just use the value directly from the form state
+                  // (Assuming form state for multi-select is now [1, 2, 3])
                   field.type === "multi-select"
-                    ? form[field.key]?.map((s: any) => s.sport_id) || []
+                    ? (form[field.key] || [])
                     : form[field.key]
                 }
                 onChange={(val: string | number | (string | number)[]) => {
-                  if (field.type === "multi-select" && Array.isArray(val)) {
-                    // Map to the object structure expected by SQLModel relationship
-                    const athleteSportsObjects = val.map((id) => ({
-                      sport_id: id
-                    }));
-                    update(field.key, athleteSportsObjects);
-                  } else {
-                    update(field.key, val);
-                  }
+                  // 2. No more mapping to objects! Just send the raw ID or array of IDs
+                  update(field.key, val);
                 }}
               />
             )}

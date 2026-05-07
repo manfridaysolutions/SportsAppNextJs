@@ -177,31 +177,18 @@ export function EditableRow<T extends Record<string, any>>({
 
                 if (field.type === "select" || field.type === "multi-select") {
                   const isMulti = field.type === "multi-select";
+
                   return (
                     <ComboBoxEditor
                       isMulti={isMulti}
                       options={field.options || []}
                       value={
                         isMulti
-                          ? (merged[field.key] as any[])?.map(s => s.sport_id) || []
+                          // Extract the IDs from objects for the UI, or use raw IDs if already flattened
+                          ? (merged[field.key] as any[])?.map(item => item.sport_id || item.position_id || item) || []
                           : merged[field.key]
                       }
-                      onChange={(val: (string | number)[]) => {
-                        const updatedRelationship = val.map(sportId => {
-                          // 1. Look in the ORIGINAL record to see if this relationship already exists
-                          const existing = (record[field.key] as any[])?.find(
-                            (s) => String(s.sport_id) === String(sportId)
-                          );
-
-                          return {
-                            // 2. If it exists, include the athlete_sport_id so the Repo recognizes it
-                            ...(existing?.athlete_sport_id && { athlete_sport_id: existing.athlete_sport_id }),
-                            sport_id: sportId,
-                            athlete_id: id // This is the 'athlete_id' from the current row
-                          };
-                        });
-                        updateField(field.key, updatedRelationship);
-                      }}
+                      onChange={(val) => updateField(field.key, val)} // Clean and simple!
                     />
                   );
                 }

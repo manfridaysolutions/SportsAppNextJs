@@ -22,6 +22,9 @@ export default function TeamsPage() {
   const { data: teams = [], refetch: refetchTeams, isLoading: isLoadingTeams } = useTeams(league_id);
   const { data: seasons = [], refetch: refetchSeasons, isLoading: isLoadingSeasons } = useSeasons(league_id);
 
+  const selectedSeason = seasons.find(s => s.season_id === selectedSeasonId) || null;
+  const selectedTeam = teams.find(s => s.team_id === selectedTeamId) || null;
+
   useEffect(() => {
     if (seasons.length > 0 && !selectedSeasonId) {
       const today = new Date();
@@ -76,7 +79,7 @@ export default function TeamsPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
         <RostersTable
-          season_Id ={selectedSeasonId}
+          season={selectedSeason ?? null}
           team_Id={selectedTeamId}
         />
       </div>
