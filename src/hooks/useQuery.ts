@@ -1,9 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 
 import { apiGet } from "@/lib/api";
 import { resources } from "@/lib/resources"
 
 import { Athlete } from "@/types/athlete";
+import { Contract } from "@/types/contract";
 import { League } from "@/types/league";
 import { Position } from "@/types/position";
 import { ReferenceCategory } from "@/types/referencecategory";
@@ -13,6 +14,7 @@ import { Season } from "@/types/season";
 import { Sport } from "@/types/sport";
 import { StatDefinition } from "@/types/statDefinition";
 import { Team } from "@/types/team";
+import { ChildProcessWithoutNullStreams } from "child_process";
 
 export function useAthletesBySport(sport_id: number | null) {
   const { key, endpoint } = resources.athletes.bySport(sport_id);
@@ -21,6 +23,41 @@ export function useAthletesBySport(sport_id: number | null) {
     queryKey: key,
     queryFn: () => apiGet<Athlete[]>(endpoint),
     enabled: !!sport_id, // Clean shorthand for sportId !== null
+  });
+}
+
+export function useContractsByAthlete(athlete_id: number | null, 
+  options?: Partial<UseQueryOptions<Contract[]>>
+) {
+  const { key, endpoint } = resources.contracts.byAthlete(athlete_id);
+
+  return useQuery({
+    queryKey: key,
+    queryFn: () => apiGet<Contract[]>(endpoint),
+    ...options,
+  });
+}
+
+export function useContractsByTeam(team_id: number | null,
+  options?: Partial<UseQueryOptions<Contract[]>>
+) {
+  const { key, endpoint } = resources.contracts.byTeam(team_id);
+
+  return useQuery({
+    queryKey: key,
+    queryFn: () => apiGet<Contract[]>(endpoint),
+    ...options
+  });
+}
+
+export function useLeaguesDetail(league_id: number | null) {
+  const { key, endpoint } = resources.leagues.detail(league_id);
+
+  return useQuery({
+    queryKey: key,
+    queryFn: () => apiGet<League[]>(endpoint),
+    enabled: !!league_id,
+    select: (data) => (data.length > 0 ? data[0] : null),
   });
 }
 

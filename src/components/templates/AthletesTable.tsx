@@ -70,6 +70,8 @@ return (
       invalidateKey={resources.athletes.bySport(sport_id).key}
       addLabel="Athlete"
       fields={athleteFields}
+      selectedId={selectedAthlete?.athlete_id}
+      onSelect={onSelectAthlete}
    />
   );
 }

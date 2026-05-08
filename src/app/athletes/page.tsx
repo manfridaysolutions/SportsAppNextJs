@@ -1,19 +1,23 @@
 "use client";
 
+import { useState } from "react";
 import { useSearchParams } from "next/navigation";
-import {  } from "@/hooks/useQuery";
-import { ModelSelector } from "@/components/molecules/ModelSelector";
 import { useAthletesBySport, useSportDetail, useReferenceValuesForCategories } from "@/hooks/useQuery";
 
 import { AthletesTable, REF_REQUIREMENTS_ATHLETES } from "@/components/templates/AthletesTable";
+import { ContractsTable, REF_REQUIREMENTS_CONTRACTS } from "@/components/templates/ContractsTable";
 import { QuerystringValidator } from "@/components/molecules/QuerystringValidator";
 
+import { Athlete } from "@/types/athlete";
 
 const DYNAMIC_REF_KEYS = Array.from(new Set([
-    ...REF_REQUIREMENTS_ATHLETES
+    ...REF_REQUIREMENTS_ATHLETES,
+    ...REF_REQUIREMENTS_CONTRACTS
 ]));
 
 export default function AthletesPage() {
+    const [selectedAthlete, setSelectedAthlete] = useState<Athlete | null>(null);
+
     const searchParams = useSearchParams();
     const sport_id = searchParams.get("sport_id") ? Number(searchParams.get("sport_id")) : null;
 
@@ -55,7 +59,17 @@ export default function AthletesPage() {
                 <AthletesTable
                     sport={sport!} // Non-null assertion safe due to QueryValidator
                     referenceData={referenceData}
+                    onSelectAthlete={(athlete) => setSelectedAthlete(athlete)}
+                    selectedAthlete={selectedAthlete}
                 />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                    {/* Positions Column */}
+                    <ContractsTable
+                        referenceData={referenceData}
+                        athlete={selectedAthlete}
+                    />
+                </div>
+
             </div>
         </QuerystringValidator>
     )

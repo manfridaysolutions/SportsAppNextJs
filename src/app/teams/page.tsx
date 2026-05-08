@@ -1,29 +1,41 @@
 "use client";
 
 import { ModelSelector } from "@/components/molecules/ModelSelector";
-import { useTeams, useSeasons } from "@/hooks/useQuery";
+import { useTeams, useSeasons, useLeaguesDetail, useReferenceValuesForCategories } from "@/hooks/useQuery";
 import { useState, useEffect } from "react";
 import { RostersTable } from "@/components/templates/RostersTable";
+import { TeamsTable, REF_REQUIREMENTS_TEAMS } from "@/components/templates/TeamsTable";
+import { ContractsTable, REF_REQUIREMENTS_CONTRACTS } from "@/components/templates/ContractsTable";
+
+import { Team } from "@/types/team"
 
 import { useSearchParams } from "next/navigation";
 
 import { QuerystringValidator } from "@/components/molecules/QuerystringValidator";
 
 const DYNAMIC_REF_KEYS = Array.from(new Set([
+  ...REF_REQUIREMENTS_TEAMS,
+  ...REF_REQUIREMENTS_CONTRACTS
 ]));
 
 export default function TeamsPage() {
   const searchParams = useSearchParams();
   const league_id = Number(searchParams.get("league_id"));
 
+  const { data: league, refetch: refetchLeague, isLoading: isLoadingLeague } = useLeaguesDetail(league_id);
+
+  const { data: referenceData = {}, isLoading: isLoadingRef } = useReferenceValuesForCategories(DYNAMIC_REF_KEYS);
+
   const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
   const [selectedSeasonId, setSelectedSeasonId] = useState<number | null>(null);
+
+  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
 
   const { data: teams = [], refetch: refetchTeams, isLoading: isLoadingTeams } = useTeams(league_id);
   const { data: seasons = [], refetch: refetchSeasons, isLoading: isLoadingSeasons } = useSeasons(league_id);
 
   const selectedSeason = seasons.find(s => s.season_id === selectedSeasonId) || null;
-  const selectedTeam = teams.find(s => s.team_id === selectedTeamId) || null;
+  // const selectedTeam = teams.find(s => s.team_id === selectedTeamId) || null;
 
   useEffect(() => {
     if (seasons.length > 0 && !selectedSeasonId) {
@@ -57,31 +69,43 @@ export default function TeamsPage() {
         )}
       </header>
 
-      <ModelSelector
-        items={teams}
-        selectedId={selectedTeamId}
-        onSelect={(id) => setSelectedTeamId(id)}
-        idKey="team_id"
-        labelKey="team_name"
-        placeholder="Select Team"
+      <TeamsTable
+        league={league ?? null}
+        referenceData={referenceData}
+        onSelectTeam={(team) => setSelectedTeam(team)}
+        selectedTeam={selectedTeam}
       />
-
-      <ModelSelector
-        items={seasons}
-        selectedId={selectedSeasonId}
-        onSelect={(id) => setSelectedSeasonId(id)}
-        idKey="season_id"
-        labelKey="season_year"
-        sortBy="start_date"
-        sortOrder="desc"
-        placeholder="Select Season"
-      />
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-        <RostersTable
-          season={selectedSeason ?? null}
-          team={selectedTeam}
-        />
+        <div>
+          <ContractsTable
+            team={selectedTeam}
+            referenceData={referenceData}
+          />
+        </div>
+        <div>
+          <ModelSelector
+            items={teams}
+            selectedId={selectedTeamId}
+            onSelect={(id) => setSelectedTeamId(id)}
+            idKey="team_id"
+            labelKey="team_name"
+            placeholder="Select Team"
+          />
+          <ModelSelector
+            items={seasons}
+            selectedId={selectedSeasonId}
+            onSelect={(id) => setSelectedSeasonId(id)}
+            idKey="season_id"
+            labelKey="season_year"
+            sortBy="start_date"
+            sortOrder="desc"
+            placeholder="Select Season"
+          />
+          <RostersTable
+            season={selectedSeason ?? null}
+            team={selectedTeam}
+          />
+        </div>
       </div>
     </div>
   )
