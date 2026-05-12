@@ -50,14 +50,14 @@ export function AthletesTable({ sport, referenceData, selectedAthlete, onSelectA
       label: "Sports",
       type: "multi-select",
       options: sportsData.map((s) => ({
-        id: s.sport_id, 
+        id: s.sport_id,
         label: s.sport_name,
       })),
     },
     { key: "source_reference_id", label: "Source Reference", type: "text", visible: false }
   ];
 
-return (
+  return (
     <BaseDataTable
       title="Athletes"
       caption="A list of all sports in the system"
@@ -70,8 +70,12 @@ return (
       invalidateKey={resources.athletes.bySport(sport_id).key}
       addLabel="Athlete"
       fields={athleteFields}
+      defaultSort={[
+        { key: "last_name", order: "asc" },
+        { key: "first_name", order: "asc" },
+      ]}
       selectedId={selectedAthlete?.athlete_id}
       onSelect={onSelectAthlete}
-   />
+    />
   );
 }

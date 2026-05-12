@@ -13,7 +13,7 @@ import {
 import { CreateRow } from "./CreateRow";
 import { EditableRow } from "./EditableRow";
 import { AddButton } from "../atoms/ActionButtons";
-import { useSortableData, } from "@/hooks/useSortableData";
+import { useSortableData, SortConfig } from "@/hooks/useSortableData";
 import { usePagination } from "@/hooks/usePagination";
 import { useFilter } from "@/hooks/useFilter";
 import { TablePagination } from "../molecules/TablePagination";
@@ -38,6 +38,7 @@ interface BaseDataTableProps<T> {
   selectedId?: number | null;
   showRowsPerPage?: boolean; // Pass-through prop
   onSelect?: (item: T) => void;
+  defaultSort?: SortConfig[];
 }
 
 export function BaseDataTable<T extends Record<string, any>>({
@@ -56,7 +57,8 @@ export function BaseDataTable<T extends Record<string, any>>({
   referenceData,
   selectedId,
   showRowsPerPage = false,
-  onSelect
+  onSelect,
+  defaultSort = [] // Default to empty array
 }: BaseDataTableProps<T>) {
   const [creating, setCreating] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -70,7 +72,12 @@ export function BaseDataTable<T extends Record<string, any>>({
   const filteredItems = useFilter(items, searchTerm, searchableKeys);
 
   // 3. Pass filtered data to the sort hook
-  const { items: sortedItems, requestSort, sortConfigs } = useSortableData(filteredItems);
+  // const { items: sortedItems, requestSort, sortConfigs } = useSortableData(filteredItems);
+
+  const { items: sortedItems, requestSort, sortConfigs } = useSortableData(
+    filteredItems, 
+    defaultSort
+  );
 
   // 4. Pass sorted/filtered data to the pagination hook
   const {
@@ -145,7 +152,7 @@ export function BaseDataTable<T extends Record<string, any>>({
                         label={field.label}
                         sortKey={field.key}
                         sortConfigs={sortConfigs}
-                        onSort={requestSort}
+                        onSort={(key, multi) => requestSort(key, multi)}
                       />
                   ))}
                   <TableHead className="text-right">

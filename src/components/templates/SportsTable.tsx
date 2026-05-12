@@ -69,6 +69,9 @@ export function SportsTable({ referenceData, selectedSport, onSelectSport }: {
       invalidateKey={resources.sports.key}
       addLabel="Sport"
       fields={sportFields}
+      defaultSort={[
+        { key: "sport_name", order: "asc" }
+      ]}
       selectedId={selectedSport?.sport_id}
       showRowsPerPage={true}
       onSelect={onSelectSport}

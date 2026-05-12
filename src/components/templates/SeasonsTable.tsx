@@ -40,6 +40,9 @@ return (
       invalidateKey={resources.seasons.byLeague(league_id).key}
       addLabel="Season"
       fields={seasonFields}
+      defaultSort={[
+        { key: "season_year", order: "desc" }
+      ]}
    />
   );
 }

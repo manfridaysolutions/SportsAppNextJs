@@ -91,6 +91,9 @@ return (
       invalidateKey={resources.teams.byLeague(league_id).key}    // Specific key for this list
       addLabel="Team"
       fields={teamFields}
+      defaultSort={[
+        { key: "team_name", order: "asc" }
+      ]}
       selectedId={selectedTeam?.team_id}
       onSelect={onSelectTeam}
    />
