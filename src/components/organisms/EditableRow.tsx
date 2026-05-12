@@ -15,6 +15,7 @@ import { apiSave, apiDelete } from "@/lib/api";
 import { EditableRowActions } from "../molecules/EditableRowActions";
 import { ReadonlyRowActions } from "../molecules/ReadonlyRowActions";
 import { DatePicker } from "../molecules/DatePicker";
+import { HyperlinkCell } from "../molecules/HyperlinkCell";
 import { EditableCell } from "./EditableCell";
 import { FieldDef } from "../molecules/FieldDef"
 import { ComboBoxEditor } from "../molecules/ComboBoxEditor";
@@ -126,7 +127,10 @@ export function EditableRow<T extends Record<string, any>>({
               isEditing={isEditing && field.editable !== false}
               value={merged[field.key]}
               renderDisplay={(value) => {
-                // FIX: Explicitly handle multi-select rendering to avoid "Object as child" error
+                // NEW: Handle Hyperlink Display
+                if (field.type === "link") {
+                  return <HyperlinkCell item={merged} field={field} />;
+                }
                 if (field.type === "multi-select" && Array.isArray(value)) {
                   return (
                     <div className="flex flex-wrap gap-1">

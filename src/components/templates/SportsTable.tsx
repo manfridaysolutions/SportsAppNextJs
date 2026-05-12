@@ -18,7 +18,15 @@ export function SportsTable({ referenceData, selectedSport, onSelectSport }: {
   const sport_categories = referenceData?.["SportCategory"] ?? [];
 
   const sportFields: FieldDef[] = [
-    { key: "sport_name", label: "Name", type: "text" },
+    {
+      key: "sport_name",
+      label: "Sport",
+      type: "link",
+      linkOptions: {
+        baseUrl: "/leagues",
+        params: { sport_id: "sport_id" } // Pulls 'sport_id' from the current row data
+      }
+    },
     {
       key: "category_id",
       label: "Category",
@@ -35,10 +43,20 @@ export function SportsTable({ referenceData, selectedSport, onSelectSport }: {
       defaultValue: 1,
     },
     { key: "governing_body", label: "Governing Body", type: "text" },
-    { key: "description", label: "Description", type: "text" }
+    { key: "description", label: "Description", type: "text" },
+    {
+      key: "athlete_link", // Key is still needed for the column index
+      label: "Athletes",
+      type: "link",
+      linkOptions: {
+        baseUrl: "/athletes",
+        params: { sport_id: "sport_id" },
+        displayText: "View Athletes" // All rows will show this text
+      }
+    }
   ];
 
-return (
+  return (
     <BaseDataTable
       title="Sports"
       caption="A list of all sports in the system"
@@ -54,6 +72,6 @@ return (
       selectedId={selectedSport?.sport_id}
       showRowsPerPage={true}
       onSelect={onSelectSport}
-   />
+    />
   );
 }
