@@ -4,9 +4,11 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Providers } from "./providers";
 
-const playfairDisplay = Playfair_Display({subsets:['latin'],variable:'--font-serif'});
+import { NavigationSidebar } from "@/components/organisms/NavigationSidebar";
 
-const inter = Inter({subsets:['latin'],variable:'--font-sans'});
+const playfairDisplay = Playfair_Display({ subsets: ['latin'], variable: '--font-serif' });
+
+const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,7 +35,14 @@ export default function RootLayout({
       lang="en"
       className={cn("dark", "h-full", "antialiased", geistSans.variable, geistMono.variable, inter.variable, "font-serif", playfairDisplay.variable)}
     >
-      <body className="min-h-full flex flex-col"><Providers>{children}</Providers></body>
+      <body className="flex h-screen overflow-hidden bg-background">
+        <NavigationSidebar />
+        <Providers>
+          <main className="flex-1 overflow-y-auto p-8">
+            {children}
+          </main>
+        </Providers>
+      </body>
     </html>
   );
 }
