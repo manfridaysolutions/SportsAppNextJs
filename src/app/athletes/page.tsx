@@ -1,13 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { useAthletesBySport, useSportDetail, useReferenceValuesForCategories } from "@/hooks/useQuery";
+import { useState, useMemo, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { useAthletesBySport, useSports, useReferenceValuesForCategories } from "@/hooks/useQuery";
 
 import { AthletesTable, REF_REQUIREMENTS_ATHLETES } from "@/components/templates/AthletesTable";
 import { ContractsTable, REF_REQUIREMENTS_CONTRACTS } from "@/components/templates/ContractsTable";
 import { QuerystringValidator } from "@/components/molecules/QuerystringValidator";
+import { SportsSelector } from "@/components/organisms/SportsSelector";
 
+import { Sport } from "@/types/sport";
 import { Athlete } from "@/types/athlete";
 
 const DYNAMIC_REF_KEYS = Array.from(new Set([
@@ -16,18 +18,32 @@ const DYNAMIC_REF_KEYS = Array.from(new Set([
 ]));
 
 export default function AthletesPage() {
-    const [selectedAthlete, setSelectedAthlete] = useState<Athlete | null>(null);
-
+    const router = useRouter(); // Initialize router
     const searchParams = useSearchParams();
+    
+    // 1. Get raw ID from URL
     const sport_id = searchParams.get("sport_id") ? Number(searchParams.get("sport_id")) : null;
 
-    // Validate the sport_id passed in exists
-    const { data: sport, isLoading: isInitialLoading } = useSportDetail(sport_id); // Check global loading
-
-    const { data: athletes = [], refetch, isLoading: isLoadingAthletes } = useAthletesBySport(sport_id);
+    // 2. Fetch shared data
+    const { data: sports = [], isLoading: isInitialLoading } = useSports();
     const { data: referenceData = {}, isLoading: isLoadingRef } = useReferenceValuesForCategories(DYNAMIC_REF_KEYS);
 
-    // 3. Consolidated Syncing State
+    // 3. Athlete-specific data (only fires if sport_id exists)
+    const { data: athletes = [], refetch, isLoading: isLoadingAthletes } = useAthletesBySport(sport_id);
+    
+    // 4. Local state for drill-down selection
+    const [selectedAthlete, setSelectedAthlete] = useState<Athlete | null>(null);
+
+    // 5. Derive the current sport object from the URL ID
+    const sport = useMemo(() => {
+        if (!sports || !sport_id) return null;
+        return sports.find((s) => s.sport_id === sport_id) || null;
+    }, [sports, sport_id]);    
+
+    const handleSportChange = (sport: Sport) => {
+        router.push(`/athletes?sport_id=${sport.sport_id}`);
+    };
+
     const isSyncing = isLoadingAthletes || isLoadingRef;
 
     return (
@@ -42,7 +58,11 @@ export default function AthletesPage() {
                 <header className="flex justify-between items-center mb-4">
                     <div className="space-y-1">
                         <h1 className="text-2xl font-semibold tracking-tight">
-                            {sport?.sport_name} Roster
+                            Athletes of
+                            <SportsSelector
+                                selectedSport={sport}
+                                onSelect={handleSportChange}
+                            /> 
                         </h1>
                         <p className="text-sm text-muted-foreground">
                             Managing athletes and contracts for {sport?.governing_body}
@@ -59,7 +79,7 @@ export default function AthletesPage() {
                 <AthletesTable
                     sport={sport!} // Non-null assertion safe due to QueryValidator
                     referenceData={referenceData}
-                    onSelectAthlete={(athlete) => setSelectedAthlete(athlete)}
+                    onSelectAthlete={setSelectedAthlete}
                     selectedAthlete={selectedAthlete}
                 />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">

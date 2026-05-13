@@ -17,10 +17,10 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
-interface ModelSelectorProps<T> {
+interface BaseSelectorProps<T> {
   items: T[];
   selectedId?: number | null;
-  onSelect: (id: any) => void;
+  onSelect?: (item: T) => void;
   idKey: keyof T;
   labelKey: keyof T;
   sortBy?: keyof T; // New: specifying the sort field
@@ -30,7 +30,7 @@ interface ModelSelectorProps<T> {
   className?: string;
 }
 
-export function ModelSelector<T>({
+export function BaseSelector<T>({
   items,
   selectedId,
   onSelect,
@@ -41,13 +41,13 @@ export function ModelSelector<T>({
   placeholder = "Select item...",
   searchPlaceholder = "Search...",
   className = "w-[200px]",
-}: ModelSelectorProps<T>) {
+}: BaseSelectorProps<T>) {
   const [open, setOpen] = React.useState(false)
 
   // 1. Sort the items before rendering
   const sortedItems = React.useMemo(() => {
     const sortField = sortBy || labelKey; // Default to labelKey if no sortBy provided
-    
+
     return [...items].sort((a, b) => {
       const valA = a[sortField];
       const valB = b[sortField];
@@ -81,13 +81,13 @@ export function ModelSelector<T>({
             {sortedItems.map((item) => {
               const id = item[idKey];
               const label = String(item[labelKey]);
-              
+
               return (
                 <CommandItem
                   key={String(id)}
                   value={label}
                   onSelect={() => {
-                    onSelect(id)
+                    if (onSelect) onSelect(item); // Execute the function
                     setOpen(false)
                   }}
                   className="text-xs cursor-pointer"

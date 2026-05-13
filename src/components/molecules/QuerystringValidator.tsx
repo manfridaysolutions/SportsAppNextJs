@@ -35,7 +35,7 @@ export function QuerystringValidator<T>({
   }
 
   // 2. Error State: ID is missing, NaN, or record doesn't exist in cache/DB
-  if (!id || isNaN(id) || !data) {
+  if (id !== null && !data) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-6 text-center space-y-4">
         <h2 className="text-xl font-semibold text-destructive">Invalid {entityName} Selected</h2>
