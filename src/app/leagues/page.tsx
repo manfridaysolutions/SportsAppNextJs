@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useMemo, useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 
 import { QuerystringValidator } from "@/components/molecules/QuerystringValidator";
 import { LeaguesTable, REF_REQUIREMENTS_LEAGUES } from "@/components/templates/LeaguesTable";
@@ -9,8 +9,10 @@ import { TeamsTable, REF_REQUIREMENTS_TEAMS } from "@/components/templates/Teams
 import { SeasonsTable } from "@/components/templates/SeasonsTable";
 
 import { League } from "@/types/league"
+import { Sport } from "@/types/sport";
 
-import { useSportDetail, useReferenceValuesForCategories } from "@/hooks/useQuery"
+import { useSports, useReferenceValuesForCategories } from "@/hooks/useQuery"
+import { SportsSelector } from "@/components/organisms/selectors/SportsSelector";
 
 
 
@@ -20,13 +22,24 @@ const DYNAMIC_REF_KEYS = Array.from(new Set([
 ]));
 
 export default function LeaguesPage() {
+  const router = useRouter(); // Initialize router
+
   const searchParams = useSearchParams();
   const sport_id = searchParams.get("sport_id") ? Number(searchParams.get("sport_id")) : null;
 
-  const { data: sport, isLoading: isInitialLoading } = useSportDetail(sport_id); // Check global loading
+  const { data: sports, isLoading: isInitialLoading } = useSports(); // Check global loading
+  const { data: referenceData = {}, isLoading: isLoadingRef } = useReferenceValuesForCategories(DYNAMIC_REF_KEYS);
 
   const [selectedLeague, setSelectedLeague] = useState<League | null>(null);
-  const { data: referenceData = {}, isLoading: isLoadingRef } = useReferenceValuesForCategories(DYNAMIC_REF_KEYS);
+
+  const sport = useMemo(() => {
+    if (!sports || !sport_id) return null;
+    return sports.find((s) => s.sport_id === sport_id) || null;
+  }, [sports, sport_id]);
+
+  const handleSportChange = (sport: Sport) => {
+    router.push(`/leagues?sport_id=${sport.sport_id}`);
+  };
 
   return (
     <QuerystringValidator
@@ -44,10 +57,15 @@ export default function LeaguesPage() {
           )}
         </header>
 
+        <SportsSelector
+          selectedSport={sport}
+          onSelect={handleSportChange}
+        />
+
         <LeaguesTable
           referenceData={referenceData}
           sport={sport ?? null}
-          onSelectLeague={(league) => setSelectedLeague(league)}
+          onSelectLeague={setSelectedLeague}
           selectedLeague={selectedLeague}
         />
 

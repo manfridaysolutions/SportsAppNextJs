@@ -1,7 +1,7 @@
 "use client";
 
 import { useSports } from "@/hooks/useQuery";
-import { BaseSelector } from "./BaseSelector";
+import { BaseSelector } from "../BaseSelector";
 import { Sport } from "@/types/sport";
 
 interface SportSelectorProps {

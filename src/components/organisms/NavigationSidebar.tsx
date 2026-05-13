@@ -16,9 +16,9 @@ import { cn } from "@/lib/utils"; // Standard shadcn utility
 
 const navItems = [
   { name: "Sports", href: "/sports", icon: LayoutDashboard },
+  { name: "Leagues", href: "/leagues", icon: FileText },
   { name: "Athletes", href: "/athletes", icon: Users },
   { name: "Teams", href: "/teams", icon: Trophy },
-  { name: "Contracts", href: "/contracts", icon: FileText },
   { name: "Settings", href: "/references", icon: Settings },
 ];
 

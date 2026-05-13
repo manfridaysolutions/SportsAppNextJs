@@ -1,4 +1,4 @@
-import { BaseSelector } from "./BaseSelector";
+import { BaseSelector } from "../BaseSelector";
 import { League } from "@/types/league";
 import { Season } from "@/types/season";
 import { useSeasons } from "@/hooks/useQuery";

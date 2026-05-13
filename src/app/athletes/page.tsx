@@ -7,7 +7,7 @@ import { useAthletesBySport, useSports, useReferenceValuesForCategories } from "
 import { AthletesTable, REF_REQUIREMENTS_ATHLETES } from "@/components/templates/AthletesTable";
 import { ContractsTable, REF_REQUIREMENTS_CONTRACTS } from "@/components/templates/ContractsTable";
 import { QuerystringValidator } from "@/components/molecules/QuerystringValidator";
-import { SportsSelector } from "@/components/organisms/SportsSelector";
+import { SportsSelector } from "@/components/organisms/selectors/SportsSelector";
 
 import { Sport } from "@/types/sport";
 import { Athlete } from "@/types/athlete";
