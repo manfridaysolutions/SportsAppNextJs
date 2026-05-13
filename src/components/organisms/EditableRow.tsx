@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query"; // Import queryClient
 import { TableRow, TableCell } from "../ui/table";
 import { Input } from "../ui/input";
 import {
@@ -11,13 +12,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { apiSave, apiDelete } from "@/lib/api";
+import { apiDelete } from "@/lib/api";
 import { EditableRowActions } from "../molecules/EditableRowActions";
 import { ReadonlyRowActions } from "../molecules/ReadonlyRowActions";
 import { DatePicker } from "../molecules/DatePicker";
 import { HyperlinkCell } from "../molecules/HyperlinkCell";
 import { EditableCell } from "./EditableCell";
-import { FieldDef } from "../molecules/FieldDef"
+import { FieldDef } from "../molecules/FieldDef";
 import { ComboBoxEditor } from "../molecules/ComboBoxEditor";
 import { useGenericMutation } from "@/hooks/useGenericMutation";
 
@@ -27,7 +28,7 @@ interface EditableRowProps<T> {
   endpoint: string;
   fields: FieldDef[];
   onRefresh: () => void;
-  invalidateKey?: readonly any[]; // Added for TanStack Query
+  invalidateKey?: readonly any[] | readonly (readonly any[])[];
   onClick?: () => void;
   className?: string;
   idPlaceholder?: string;
@@ -39,44 +40,47 @@ export function EditableRow<T extends Record<string, any>>({
   endpoint,
   fields,
   onRefresh,
-  invalidateKey, // Destructure the new prop
+  invalidateKey,
   onClick,
   className,
   idPlaceholder = "auto",
 }: EditableRowProps<T>) {
   const [buffer, setBuffer] = useState<Partial<T>>({});
   const [isEditing, setIsEditing] = useState(false);
-  // const [saving, setSaving] = useState(false);
 
   const id = record[idField] as number;
   const merged = { ...record, ...buffer };
-
-  // 1. Initialize the generic mutation
-  const { mutate: saveRecord, isPending: saving } = useGenericMutation<T>(
-    invalidateKey,
-    {
-      onSuccess: () => {
-        setBuffer({});
-        setIsEditing(false);
-        onRefresh(); // Keep onRefresh for non-query state if needed
-      },
-      onError: (error) => {
-        console.error("Save failed", error);
-      }
-    }
-  );
 
   const updateField = (field: string, value: any) => {
     setBuffer((prev) => ({ ...prev, [field]: value }));
   };
 
+  // 1. Pass the invalidateKey directly to the hook. 
+  // The hook's internal onSuccess will now handle the multi-key invalidation.
+  const { mutate: performMutation, isPending: saving } = useGenericMutation<T>(
+    invalidateKey, 
+    {
+      onSuccess: () => {
+        // We only handle local UI state here
+        setBuffer({});
+        setIsEditing(false);
+        onRefresh(); 
+      },
+      onError: (error) => {
+        console.error("Mutation failed", error);
+      }
+    }
+  );
+
   const handleSave = () => {
-    if (Object.keys(buffer).length === 0) {
+    // If id is 0 or undefined, it's an INSERT (POST), otherwise UPDATE (PUT)
+    const isNew = !id || id === 0;
+
+    if (!isNew && Object.keys(buffer).length === 0) {
       setIsEditing(false);
       return;
     }
 
-    // 2. Prepare the payload
     const payload = Object.keys(buffer).reduce((acc, key) => {
       if (key !== idField) {
         acc[key as keyof T] = buffer[key as keyof T];
@@ -84,10 +88,9 @@ export function EditableRow<T extends Record<string, any>>({
       return acc;
     }, {} as Partial<T>);
 
-    // 3. Trigger the mutation
-    saveRecord({
-      path: `${endpoint}${id}`,
-      method: "PUT",
+    performMutation({
+      path: isNew ? endpoint : `${endpoint}${id}`,
+      method: isNew ? "POST" : "PUT",
       data: payload,
     });
   };
@@ -100,14 +103,14 @@ export function EditableRow<T extends Record<string, any>>({
   const handleDelete = async () => {
     const confirmed = confirm("Are you sure you want to delete this record?");
     if (!confirmed) return;
-    try {
-      await apiDelete(`${endpoint}${id}`);
-      onRefresh();
-    } catch (err) {
-      console.error("Delete error", err);
-    }
-  };
 
+    // Use the mutation for DELETE to trigger invalidation automatically
+    performMutation({
+      path: `${endpoint}${id}`,
+      method: "DELETE",
+    });
+  };
+  
   return (
     <TableRow
       onClick={onClick}
@@ -127,23 +130,13 @@ export function EditableRow<T extends Record<string, any>>({
               isEditing={isEditing && field.editable !== false}
               value={merged[field.key]}
               renderDisplay={(value) => {
-                // NEW: Handle Hyperlink Display
+                // Use custom render if provided in FieldDef
+                if (field.render) {
+                  return field.render(value, merged);
+                }
+
                 if (field.type === "link") {
                   return <HyperlinkCell item={merged} field={field} />;
-                }
-                if (field.type === "multi-select" && Array.isArray(value)) {
-                  return (
-                    <div className="flex flex-wrap gap-1">
-                      {value.map((rel: any) => {
-                        const opt = field.options?.find((o) => String(o.id) === String(rel.sport_id));
-                        return (
-                          <Badge key={rel.athlete_sport_id || rel.sport_id} variant="secondary" className="text-[10px] px-1 py-0 h-5">
-                            {opt ? opt.label : `ID: ${rel.sport_id}`}
-                          </Badge>
-                        );
-                      })}
-                    </div>
-                  );
                 }
 
                 if (field.type === "boolean") {
@@ -153,6 +146,22 @@ export function EditableRow<T extends Record<string, any>>({
                 if (field.type === "select") {
                   const opt = field.options?.find((o) => String(o.id) === String(value));
                   return opt ? opt.label : (value ?? "N/A");
+                }
+
+                if (field.type === "multi-select" && Array.isArray(value)) {
+                  return (
+                    <div className="flex flex-wrap gap-1">
+                      {value.map((item: any, idx) => {
+                        const valId = item.id || item;
+                        const opt = field.options?.find((o) => String(o.id) === String(valId));
+                        return (
+                          <Badge key={valId || idx} variant="secondary" className="text-[10px] px-1 py-0 h-5">
+                            {opt ? opt.label : `ID: ${valId}`}
+                          </Badge>
+                        );
+                      })}
+                    </div>
+                  );
                 }
 
                 return value !== null && value !== undefined ? String(value) : "";
@@ -189,19 +198,16 @@ export function EditableRow<T extends Record<string, any>>({
                 }
 
                 if (field.type === "select" || field.type === "multi-select") {
-                  const isMulti = field.type === "multi-select";
-
                   return (
                     <ComboBoxEditor
-                      isMulti={isMulti}
+                      isMulti={field.type === "multi-select"}
                       options={field.options || []}
                       value={
-                        isMulti
-                          // Extract the IDs from objects for the UI, or use raw IDs if already flattened
-                          ? (merged[field.key] as any[])?.map(item => item.sport_id || item.position_id || item) || []
+                        field.type === "multi-select"
+                          ? (merged[field.key] as any[])?.map(item => item.id || item.position_id || item) || []
                           : merged[field.key]
                       }
-                      onChange={(val) => updateField(field.key, val)} // Clean and simple!
+                      onChange={(val) => updateField(field.key, val)}
                     />
                   );
                 }

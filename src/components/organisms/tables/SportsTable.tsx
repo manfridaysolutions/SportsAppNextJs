@@ -75,6 +75,7 @@ export function SportsTable({ referenceData, selectedSport, onSelectSport }: {
       selectedId={selectedSport?.sport_id}
       showRowsPerPage={true}
       onSelect={onSelectSport}
+      itemsPerPage={5}
     />
   );
 }

@@ -1,34 +1,54 @@
 import { useMutation, useQueryClient, UseMutationOptions } from "@tanstack/react-query";
-import { apiSave } from "@/lib/api";
+import { apiSave, apiDelete } from "@/lib/api";
 
 interface MutationParams<T> {
   path: string;
-  method: "POST" | "PUT";
-  data: Partial<T>;
+  method: "POST" | "PUT" | "DELETE";
+  data?: Partial<T>; // Made optional for DELETE requests
 }
 
 export function useGenericMutation<T>(
-  invalidateKey?: readonly any[], 
+  invalidateKey?: readonly any[] | readonly (readonly any[])[],
   options?: UseMutationOptions<T, Error, MutationParams<T>>
 ) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ path, method, data }: MutationParams<T>) => 
-      apiSave<T>(path, method, data),
-    
-    // Updated to accept 4 arguments: data, variables, context, and the rollup/result
-    onSuccess: (data, variables, context, mutationResult) => {
-      // 1. Handle our generic cache invalidation
-      if (invalidateKey) {
-        queryClient.invalidateQueries({ queryKey: invalidateKey });
+    mutationFn: async ({ path, method, data }: MutationParams<T>) => {
+      if (method === "DELETE") {
+        await apiDelete(path);
+        return {} as T;
       }
-      
-      // 2. Safely call the custom onSuccess if passed in via options
-      if (options?.onSuccess) {
-        options.onSuccess(data, variables, context, mutationResult);
-      }
+      return apiSave<T>(path, method, data || {});
     },
-    ...options,
-  });
-}
+
+    onSuccess: async (...args) => {
+      const [data, variables, context] = args;
+      if (invalidateKey) {
+        // 1. Log to your browser console so you can see the "Live" key being used
+        console.log("Mutation Success. InvalidateKey provided:", invalidateKey);
+
+        // 2. Identify if we have multiple keys or just one
+        // We want to ensure we have an array of arrays: [ [key1], [key2] ]
+        const finalKeys = Array.isArray(invalidateKey[0])
+          ? invalidateKey
+          : [invalidateKey];
+
+        const promises = finalKeys.map((key) => {
+          console.log("📡 Invalidation triggered for:", key);
+          return queryClient.invalidateQueries({
+            queryKey: key as any,
+            exact: false, // Helps match even if types (string vs number) are slightly off
+            refetchType: 'active'
+          });
+        });
+
+        await Promise.all(promises);
+      }
+
+      if (options?.onSuccess) {
+        options.onSuccess(...args);
+      }
+    }
+  })
+};

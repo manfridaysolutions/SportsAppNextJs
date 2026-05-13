@@ -8,6 +8,7 @@ export interface FieldDef {
         target?: "_blank" | "_self";
         displayText?: string; // NEW: Allows static text override
     };
+    render?: (value: any, record: any) => React.ReactNode;
     options?: { id: number | string; label: string }[];
     defaultValue?: any;
     editable?: boolean;

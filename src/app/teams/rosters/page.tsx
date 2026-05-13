@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react"; // Added useEffect
 import { useSearchParams, useRouter } from "next/navigation";
 import { querySports } from "@/hooks/querySports";
 import { querySeasons } from "@/hooks/querySeasons";
@@ -9,13 +9,16 @@ import { queryReferenceValuesForCategories } from "@/hooks/queryReferences";
 import { queryTeams } from "@/hooks/queryTeams";
 
 import { RostersTable } from "@/components/organisms/tables/RostersTable";
+import { RostersPositionTable } from "@/components/organisms/tables/RosterPositonsTable";
 import { SportsSelector } from "@/components/organisms/selectors/SportsSelector";
 import { LeaguesSelector } from "@/components/organisms/selectors/LeaguesSelector";
 import { TeamsSelector } from "@/components/organisms/selectors/TeamsSelector";
 import { SeasonsSelector } from "@/components/organisms/selectors/SeasonsSelector";
 import { QuerystringValidator } from "@/components/molecules/QuerystringValidator";
+import { Roster } from "@/types/roster";
+import { RosterResources } from "@/hooks/queryRosters";
 
-export default function TeamsPage() {
+export default function TeamRostersPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -56,6 +59,14 @@ export default function TeamsPage() {
     )[0];
   }, [seasons, season_id]);
 
+  const [selectedRoster, setSelectedRoster] = useState<Roster | null>(null);
+
+  useEffect(() => {
+    setSelectedRoster(null);
+  }, [team_id, season_id]);
+
+  const rosterRefreshKey = RosterResources.bySeasonAndTeam(season_id, team_id).key;
+
   // 4. Navigation Handlers
   const handleUpdateQuery = (key: string, value: number) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -64,6 +75,7 @@ export default function TeamsPage() {
   };
 
   const isSyncing = isLoadingTeams || isLoadingSeasons || isLoadingSports;
+
 
   return (
     <QuerystringValidator
@@ -86,14 +98,14 @@ export default function TeamsPage() {
               <td>
                 <SportsSelector
                   selectedSport={selectedSport}
-                  onSelect={(s) => router.push(`/teams?sport_id=${s.sport_id}`)}
+                  onSelect={(s) => router.push(`/teams/rosters/?sport_id=${s.sport_id}`)}
                 />
               </td>
               <td>
                 <LeaguesSelector
                   sport={selectedSport}
                   selectedLeague={league}
-                  onSelect={(l) => router.push(`/teams?league_id=${l.league_id}&sport_id=${selectedSport?.sport_id}`)}
+                  onSelect={(l) => router.push(`/teams/rosters?league_id=${l.league_id}&sport_id=${selectedSport?.sport_id}`)}
                 />
               </td>
               <td>
@@ -116,11 +128,19 @@ export default function TeamsPage() {
 
         <div className="space-y-6">
           <RostersTable
-            league={league}
+            sport={selectedSport}
             season={selectedSeason}
             team={selectedTeam}
+            onSelectRoster={(roster) => setSelectedRoster(roster)}
+            selectedRoster={selectedRoster}
           />
         </div>
+        <RostersPositionTable
+          sport={selectedSport}
+          roster={selectedRoster} // Pass the selected roster here based on your application's logic
+          invalidateParentKey={rosterRefreshKey} // Pass the roster refresh key to trigger parent refresh
+        />
+
       </div>
     </QuerystringValidator>
   );

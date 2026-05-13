@@ -30,7 +30,7 @@ interface BaseDataTableProps<T> {
   idPlaceholder?: string;
   endpoint: string;
   onRefresh: () => void;
-  invalidateKey?: readonly any[]; // Added to support TanStack Query invalidation
+  invalidateKey?: readonly any[] | readonly (readonly any[])[];
   fields: any[];
   addLabel: string;
   headers?: string[]; // Optional: will use field labels if not provided

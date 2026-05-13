@@ -36,7 +36,7 @@ export function NavigationSidebar() {
       icon: Trophy,
       children: [
         { name: "Contracts", href: "/teams/contracts", icon: ScrollText },
-        { name: "Roster", href: "/teams/rosters", icon: UserSquare2 }
+        { name: "Rosters", href: "/teams/rosters", icon: UserSquare2 }
       ]
     },
     { name: "Settings", href: "/references", icon: Settings },

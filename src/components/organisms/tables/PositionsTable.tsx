@@ -11,7 +11,7 @@ export function PositionsTable({ sport }: {
 }) {
     const sport_id = sport?.sport_id ?? null;
 
-    const { data: positions = [], refetch, isLoading } = queryPositions(sport_id);    
+    const { data: positions = [], refetch, isLoading } = queryPositions(sport);    
 
     const positionFields: FieldDef[] = [
         { key: "position_name", label: "Name", type: "text" },

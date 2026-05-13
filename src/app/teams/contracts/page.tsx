@@ -20,7 +20,7 @@ const DYNAMIC_REF_KEYS = Array.from(new Set([
     ...REF_REQUIREMENTS_CONTRACTS
 ]));
 
-export default function TeamsPage() {
+export default function TeamsContractsPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -74,14 +74,14 @@ export default function TeamsPage() {
                             <td>
                                 <SportsSelector
                                     selectedSport={selectedSport}
-                                    onSelect={(s) => router.push(`/teams?sport_id=${s.sport_id}`)}
+                                    onSelect={(s) => router.push(`/teams/contracts/?sport_id=${s.sport_id}`)}
                                 />
                             </td>
                             <td>
                                 <LeaguesSelector
                                     sport={selectedSport}
                                     selectedLeague={league}
-                                    onSelect={(l) => router.push(`/teams?league_id=${l.league_id}&sport_id=${selectedSport?.sport_id}`)}
+                                    onSelect={(l) => router.push(`/teams/contracts?league_id=${l.league_id}&sport_id=${selectedSport?.sport_id}`)}
                                 />
                             </td>
                             <td>
