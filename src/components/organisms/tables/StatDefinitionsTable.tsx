@@ -1,9 +1,9 @@
 "use client";
 
 import { resources } from "@/lib/resources";
-import { useStatDefinitions } from "@/hooks/useQuery"
-import { BaseDataTable } from "../organisms/BaseDataTable";
-import { FieldDef } from "../molecules/FieldDef"
+import { queryStatDefinitions } from "@/hooks/queryStatDefinitions"
+import { BaseDataTable } from "../BaseDataTable";
+import { FieldDef } from "../../molecules/FieldDef"
 import { Sport } from "@/types/sport";
 
 export const REF_REQUIREMENTS_STAT_DEF = ["Statistical Unit"];
@@ -14,7 +14,7 @@ export function StatDefinitionsTable({ sport, referenceData }: {
 }) {
     const sport_id = sport?.sport_id ?? null;
 
-    const { data: statDefinitions = [], refetch, isLoading } = useStatDefinitions(sport_id);
+    const { data: statDefinitions = [], refetch, isLoading } = queryStatDefinitions(sport_id);
     const stat_units = referenceData?.["Statistical Unit"] ?? [];
     
     const statDefinitionFields: FieldDef[] = [

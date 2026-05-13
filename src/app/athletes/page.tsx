@@ -2,10 +2,12 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useAthletesBySport, useSports, useReferenceValuesForCategories } from "@/hooks/useQuery";
+import { queryAthletesBySport } from "@/hooks/queryAthletes";
+import { queryReferenceValuesForCategories } from "@/hooks/queryReferences";
+import { querySports } from "@/hooks/querySports";
 
-import { AthletesTable, REF_REQUIREMENTS_ATHLETES } from "@/components/templates/AthletesTable";
-import { ContractsTable, REF_REQUIREMENTS_CONTRACTS } from "@/components/templates/ContractsTable";
+import { AthletesTable, REF_REQUIREMENTS_ATHLETES } from "@/components/organisms/tables/AthletesTable";
+import { ContractsTable, REF_REQUIREMENTS_CONTRACTS } from "@/components/organisms/tables/ContractsTable";
 import { QuerystringValidator } from "@/components/molecules/QuerystringValidator";
 import { SportsSelector } from "@/components/organisms/selectors/SportsSelector";
 
@@ -25,11 +27,11 @@ export default function AthletesPage() {
     const sport_id = searchParams.get("sport_id") ? Number(searchParams.get("sport_id")) : null;
 
     // 2. Fetch shared data
-    const { data: sports = [], isLoading: isInitialLoading } = useSports();
-    const { data: referenceData = {}, isLoading: isLoadingRef } = useReferenceValuesForCategories(DYNAMIC_REF_KEYS);
+    const { data: sports = [], isLoading: isInitialLoading } = querySports();
+    const { data: referenceData = {}, isLoading: isLoadingRef } = queryReferenceValuesForCategories(DYNAMIC_REF_KEYS);
 
     // 3. Athlete-specific data (only fires if sport_id exists)
-    const { data: athletes = [], refetch, isLoading: isLoadingAthletes } = useAthletesBySport(sport_id);
+    const { data: athletes = [], refetch, isLoading: isLoadingAthletes } = queryAthletesBySport(sport_id);
     
     // 4. Local state for drill-down selection
     const [selectedAthlete, setSelectedAthlete] = useState<Athlete | null>(null);

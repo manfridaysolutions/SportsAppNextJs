@@ -1,7 +1,7 @@
 import { BaseSelector } from "../BaseSelector";
 import { League } from "@/types/league";
 import { Season } from "@/types/season";
-import { useSeasons } from "@/hooks/useQuery";
+import { querySeasons } from "@/hooks/querySeasons";
 import { Spinner } from "@/components/atoms/Spinner";
 
 interface SeasonsSelectorProps {
@@ -11,7 +11,7 @@ interface SeasonsSelectorProps {
 }
 
 export const SeasonsSelector = ({ league, selectedSeason, onSelect }: SeasonsSelectorProps) => {
-    const { data: seasons = [], isLoading } = useSeasons(league?.league_id ?? null);
+    const { data: seasons = [], isLoading } = querySeasons(league?.league_id ?? null);
 
     return (
         <div className="relative">

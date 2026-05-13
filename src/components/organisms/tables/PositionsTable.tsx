@@ -1,9 +1,9 @@
 "use client";
 
 import { resources } from "@/lib/resources";
-import { usePositions } from "@/hooks/useQuery"
-import { BaseDataTable } from "../organisms/BaseDataTable";
-import { FieldDef } from "../molecules/FieldDef";
+import { queryPositions } from "@/hooks/queryPositions"
+import { BaseDataTable } from "../BaseDataTable";
+import { FieldDef } from "../../molecules/FieldDef";
 import { Sport } from "@/types/sport";
 
 export function PositionsTable({ sport }: { 
@@ -11,7 +11,7 @@ export function PositionsTable({ sport }: {
 }) {
     const sport_id = sport?.sport_id ?? null;
 
-    const { data: positions = [], refetch, isLoading } = usePositions(sport_id);    
+    const { data: positions = [], refetch, isLoading } = queryPositions(sport_id);    
 
     const positionFields: FieldDef[] = [
         { key: "position_name", label: "Name", type: "text" },

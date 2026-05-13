@@ -1,9 +1,9 @@
 "use client";
 
-import { useContractsByAthlete, useContractsByTeam } from "@/hooks/useQuery";
+import { queryContractsByAthlete, queryContractsByTeam } from "@/hooks/queryContracts";
 import { resources } from "@/lib/resources";
-import { BaseDataTable } from "../organisms/BaseDataTable";
-import { FieldDef } from "../molecules/FieldDef";
+import { BaseDataTable } from "../BaseDataTable";
+import { FieldDef } from "../../molecules/FieldDef";
 import { Athlete } from "@/types/athlete";
 import { Team } from "@/types/team";
 
@@ -19,8 +19,8 @@ export function ContractsTable({ athlete, team, referenceData }: {
 
   // Use the athlete hook if we have an ID, otherwise fall back to the team hook
   // We call both, but only "enable" the one we actually need
-  const athleteQuery = useContractsByAthlete(athlete_id, { enabled: !!athlete_id });
-  const teamQuery = useContractsByTeam(team_id, { enabled: !athlete_id && !!team_id });
+  const athleteQuery = queryContractsByAthlete(athlete_id, { enabled: !!athlete_id });
+  const teamQuery = queryContractsByTeam(team_id, { enabled: !athlete_id && !!team_id });
 
   // Simply pick the result set we want to use
   const { data: contracts = [], isLoading, refetch } = athlete_id ? athleteQuery : teamQuery;

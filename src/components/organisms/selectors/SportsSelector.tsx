@@ -1,6 +1,6 @@
 "use client";
 
-import { useSports } from "@/hooks/useQuery";
+import { querySports } from "@/hooks/querySports";
 import { BaseSelector } from "../BaseSelector";
 import { Sport } from "@/types/sport";
 
@@ -20,7 +20,7 @@ export function SportsSelector({
 }: SportSelectorProps) {
   
   // 1. Fetch data locally within the selector
-  const { data: sports = [], isLoading } = useSports();
+  const { data: sports = [], isLoading } = querySports();
 
   return (
     <BaseSelector

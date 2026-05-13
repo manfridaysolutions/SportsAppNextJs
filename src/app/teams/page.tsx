@@ -2,17 +2,15 @@
 
 import { useMemo, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import {
-  useSports,
-  useTeams,
-  useSeasons,
-  useLeaguesDetail,
-  useReferenceValuesForCategories
-} from "@/hooks/useQuery";
+import { querySports } from "@/hooks/querySports";
+import { querySeasons } from "@/hooks/querySeasons";
+import { queryLeaguesDetail } from "@/hooks/queryLeagues";
+import { queryReferenceValuesForCategories } from "@/hooks/queryReferences";
+import { queryTeams } from "@/hooks/queryTeams";
 
-import { TeamsTable, REF_REQUIREMENTS_TEAMS } from "@/components/templates/TeamsTable";
-import { ContractsTable, REF_REQUIREMENTS_CONTRACTS } from "@/components/templates/ContractsTable";
-import { RostersTable } from "@/components/templates/RostersTable";
+import { TeamsTable, REF_REQUIREMENTS_TEAMS } from "@/components/organisms/tables/TeamsTable";
+import { ContractsTable, REF_REQUIREMENTS_CONTRACTS } from "@/components/organisms/tables/ContractsTable";
+import { RostersTable } from "@/components/organisms/tables/RostersTable";
 import { SportsSelector } from "@/components/organisms/selectors/SportsSelector";
 import { LeaguesSelector } from "@/components/organisms/selectors/LeaguesSelector";
 import { TeamsSelector } from "@/components/organisms/selectors/TeamsSelector";
@@ -35,11 +33,11 @@ export default function TeamsPage() {
   const season_id = searchParams.get("season_id") ? Number(searchParams.get("season_id")) : null;
 
   // 2. Data Fetching
-  const { data: sports, isLoading: isInitialLoading } = useSports(); // Check global loading
-  const { data: league, isLoading: isLoadingLeague } = useLeaguesDetail(league_id);
-  const { data: teams = [], isLoading: isLoadingTeams } = useTeams(league_id);
-  const { data: seasons = [], isLoading: isLoadingSeasons } = useSeasons(league_id);
-  const { data: referenceData = {}, isLoading: isLoadingRef } = useReferenceValuesForCategories(DYNAMIC_REF_KEYS);
+  const { data: sports, isLoading: isInitialLoading } = querySports(); // Check global loading
+  const { data: league, isLoading: isLoadingLeague } = queryLeaguesDetail(league_id);
+  const { data: teams = [], isLoading: isLoadingTeams } = queryTeams(league_id);
+  const { data: seasons = [], isLoading: isLoadingSeasons } = querySeasons(league_id);
+  const { data: referenceData = {}, isLoading: isLoadingRef } = queryReferenceValuesForCategories(DYNAMIC_REF_KEYS);
 
   // 3. Derived State (finding objects based on URL IDs)
   const selectedSport = useMemo(() =>

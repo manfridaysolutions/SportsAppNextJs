@@ -1,9 +1,9 @@
 "use client";
 
 import { resources } from "@/lib/resources";
-import { useSports } from "@/hooks/useQuery";
-import { BaseDataTable } from "../organisms/BaseDataTable";
-import { FieldDef } from "../molecules/FieldDef";
+import { querySports } from "@/hooks/querySports";
+import { BaseDataTable } from "../BaseDataTable";
+import { FieldDef } from "../../molecules/FieldDef";
 
 import { Sport } from "@/types/sport";
 
@@ -14,7 +14,7 @@ export function SportsTable({ referenceData, selectedSport, onSelectSport }: {
   selectedSport?: Sport | null;
   onSelectSport?: (sport: Sport) => void;
 }) {
-  const { data: sports = [], refetch, isLoading } = useSports();
+  const { data: sports = [], refetch, isLoading } = querySports();
   const sport_categories = referenceData?.["SportCategory"] ?? [];
 
   const sportFields: FieldDef[] = [

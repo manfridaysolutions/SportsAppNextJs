@@ -1,9 +1,10 @@
 "use client";
 
-import { useAthletesBySport, useSports } from "@/hooks/useQuery";
+import { queryAthletesBySport } from "@/hooks/queryAthletes";
+import { querySports } from "@/hooks/querySports";
 import { resources } from "@/lib/resources";
-import { BaseDataTable } from "../organisms/BaseDataTable";
-import { FieldDef } from "../molecules/FieldDef";
+import { BaseDataTable } from "../BaseDataTable";
+import { FieldDef } from "../../molecules/FieldDef";
 import { Sport } from "@/types/sport"
 import { Athlete } from "@/types/athlete";
 
@@ -17,9 +18,9 @@ export function AthletesTable({ sport, referenceData, selectedAthlete, onSelectA
 }) {
   const sport_id = sport?.sport_id ?? null;
 
-  const { data: athletes = [], refetch, isLoading } = useAthletesBySport(sport_id);
+  const { data: athletes = [], refetch, isLoading } = queryAthletesBySport(sport_id);
 
-  const { data: sportsData = [] } = useSports();
+  const { data: sportsData = [] } = querySports();
 
   const countries = referenceData?.["Country"] ?? [];
 

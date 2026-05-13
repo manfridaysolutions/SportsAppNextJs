@@ -1,9 +1,9 @@
 "use client";
 
 import { resources } from "@/lib/resources";
-import { useReferenceCategories } from "@/hooks/useQuery";
-import { BaseDataTable } from "../organisms/BaseDataTable";
-import { FieldDef } from "../molecules/FieldDef";
+import { queryReferenceCategories } from "@/hooks/queryReferences";
+import { BaseDataTable } from "../BaseDataTable";
+import { FieldDef } from "../../molecules/FieldDef";
 
 import { ReferenceCategory } from "@/types/referencecategory";
 
@@ -11,7 +11,7 @@ export function ReferenceCategoriesTable({ selectedReferenceCategory, onSelectCa
   selectedReferenceCategory: ReferenceCategory | null;
   onSelectCategory: (referenceCategory: ReferenceCategory) => void;
 }) {
-  const { data: referenceCategories = [], refetch, isLoading } = useReferenceCategories();
+  const { data: referenceCategories = [], refetch, isLoading } = queryReferenceCategories();
 
   const referenceCategoryFields: FieldDef[] = [
     { key: "name", label: "Name", type: "text" },

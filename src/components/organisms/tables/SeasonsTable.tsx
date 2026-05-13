@@ -1,9 +1,9 @@
 "use client";
 
 import { resources } from "@/lib/resources";
-import { useSeasons } from "@/hooks/useQuery";
-import { BaseDataTable } from "../organisms/BaseDataTable";
-import { FieldDef } from "../molecules/FieldDef";
+import { querySeasons } from "@/hooks/querySeasons";
+import { BaseDataTable } from "../BaseDataTable";
+import { FieldDef } from "../../molecules/FieldDef";
 
 import { League } from "@/types/league"
 
@@ -12,7 +12,7 @@ export function SeasonsTable({ league }: {
 }) {
   const league_id = league?.league_id ?? null;
 
-  const { data: seasons = [], refetch, isLoading } = useSeasons(league_id);
+  const { data: seasons = [], refetch, isLoading } = querySeasons(league_id);
 
   const seasonFields: FieldDef[] = [
     { key: "season_year", label: "Season", type: "text" },

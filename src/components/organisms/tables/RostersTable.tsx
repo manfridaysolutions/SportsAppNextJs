@@ -1,9 +1,9 @@
 "use client";
 
 import { resources } from "@/lib/resources";
-import { useRosters } from "@/hooks/useQuery";
-import { BaseDataTable } from "../organisms/BaseDataTable";
-import { FieldDef } from "../molecules/FieldDef";
+import { queryRosters } from "@/hooks/queryRosters";
+import { BaseDataTable } from "../BaseDataTable";
+import { FieldDef } from "../../molecules/FieldDef";
 import { Season } from "@/types/season";
 import { Team } from "@/types/team";
 
@@ -17,7 +17,7 @@ export function RostersTable({ season, team }: {
 
   // 2. Your hooks should handle null IDs by returning an empty state or 
   // by using the "enabled" pattern if you are using TanStack Query
-  const { data: rosters = [], refetch, isLoading } = useRosters(season_id, team_id);
+  const { data: rosters = [], refetch, isLoading } = queryRosters(season_id, team_id);
   
   const rosterFields: FieldDef[] = [
     { key: "is_primary_sport", label: "Is Primary Sport", type: "boolean" },

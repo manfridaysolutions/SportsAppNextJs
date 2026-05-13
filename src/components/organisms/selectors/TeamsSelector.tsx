@@ -1,7 +1,7 @@
 import { BaseSelector } from "../BaseSelector";
 import { Team } from "@/types/team";
 import { League } from "@/types/league";
-import { useTeams } from "@/hooks/useQuery";
+import { queryTeams } from "@/hooks/queryTeams";
 import { Spinner } from "@/components/atoms/Spinner";
 
 interface TeamsSelectorProps {
@@ -11,7 +11,7 @@ interface TeamsSelectorProps {
 }
 
 export const TeamsSelector = ({ league, selectedTeam, onSelect }: TeamsSelectorProps) => {
-    const { data: teams = [], isLoading } = useTeams(league?.league_id ?? null);
+    const { data: teams = [], isLoading } = queryTeams(league?.league_id ?? null);
 
     return (
         <div className="relative">

@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
-import { ReferenceCategoriesTable } from "@/components/templates/ReferenceCategoriesTable";
-import { ReferenceValuesTable } from "@/components/templates/ReferenceValuesTable";
+import { ReferenceCategoriesTable } from "@/components/organisms/tables/ReferenceCategoriesTable";
+import { ReferenceValuesTable } from "@/components/organisms/tables/ReferenceValuesTable";
 
 import { ReferenceCategory } from "@/types/referencecategory";
 

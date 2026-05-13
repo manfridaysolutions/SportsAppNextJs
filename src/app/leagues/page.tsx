@@ -4,14 +4,15 @@ import { useMemo, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
 import { QuerystringValidator } from "@/components/molecules/QuerystringValidator";
-import { LeaguesTable, REF_REQUIREMENTS_LEAGUES } from "@/components/templates/LeaguesTable";
-import { TeamsTable, REF_REQUIREMENTS_TEAMS } from "@/components/templates/TeamsTable";
-import { SeasonsTable } from "@/components/templates/SeasonsTable";
+import { LeaguesTable, REF_REQUIREMENTS_LEAGUES } from "@/components/organisms/tables/LeaguesTable";
+import { TeamsTable, REF_REQUIREMENTS_TEAMS } from "@/components/organisms/tables/TeamsTable";
+import { SeasonsTable } from "@/components/organisms/tables/SeasonsTable";
 
 import { League } from "@/types/league"
 import { Sport } from "@/types/sport";
 
-import { useSports, useReferenceValuesForCategories } from "@/hooks/useQuery"
+import { querySports } from "@/hooks/querySports";
+import { queryReferenceValuesForCategories } from "@/hooks/queryReferences";
 import { SportsSelector } from "@/components/organisms/selectors/SportsSelector";
 
 
@@ -27,8 +28,8 @@ export default function LeaguesPage() {
   const searchParams = useSearchParams();
   const sport_id = searchParams.get("sport_id") ? Number(searchParams.get("sport_id")) : null;
 
-  const { data: sports, isLoading: isInitialLoading } = useSports(); // Check global loading
-  const { data: referenceData = {}, isLoading: isLoadingRef } = useReferenceValuesForCategories(DYNAMIC_REF_KEYS);
+  const { data: sports, isLoading: isInitialLoading } = querySports(); // Check global loading
+  const { data: referenceData = {}, isLoading: isLoadingRef } = queryReferenceValuesForCategories(DYNAMIC_REF_KEYS);
 
   const [selectedLeague, setSelectedLeague] = useState<League | null>(null);
 

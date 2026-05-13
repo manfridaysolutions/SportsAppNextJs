@@ -1,9 +1,9 @@
 "use client";
 
 import { resources } from "@/lib/resources";
-import { useTeams } from "@/hooks/useQuery";
-import { BaseDataTable } from "../organisms/BaseDataTable";
-import { FieldDef } from "../molecules/FieldDef";
+import { queryTeams } from "@/hooks/queryTeams";
+import { BaseDataTable } from "../BaseDataTable";
+import { FieldDef } from "../../molecules/FieldDef";
 
 import { Team } from "@/types/team"
 import { League } from "@/types/league"
@@ -18,7 +18,7 @@ export function TeamsTable({ league, referenceData, selectedTeam, onSelectTeam }
 }) {
   const league_id = league?.league_id ?? null;
 
-  const { data: teams = [], refetch, isLoading } = useTeams(league_id);
+  const { data: teams = [], refetch, isLoading } = queryTeams(league_id);
 
   const cities = referenceData?.["City"] ?? [];
   const states_provinces = referenceData?.["StateProvince"] ?? [];
