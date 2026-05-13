@@ -8,7 +8,7 @@ import { FieldDef } from "../../molecules/FieldDef";
 import { Team } from "@/types/team"
 import { League } from "@/types/league"
 
-export const REF_REQUIREMENTS_TEAMS = ["City","StateProvince","Country","Venue"];
+export const REF_REQUIREMENTS_TEAMS = ["City", "StateProvince", "Country", "Venue"];
 
 export function TeamsTable({ league, referenceData, selectedTeam, onSelectTeam }: {
   league: League | null;
@@ -17,6 +17,7 @@ export function TeamsTable({ league, referenceData, selectedTeam, onSelectTeam }
   onSelectTeam?: (team: Team) => void;
 }) {
   const league_id = league?.league_id ?? null;
+  const sport_id = league?.sport_id ?? null;
 
   const { data: teams = [], refetch, isLoading } = queryTeams(league_id);
 
@@ -26,7 +27,16 @@ export function TeamsTable({ league, referenceData, selectedTeam, onSelectTeam }
   const venues = referenceData?.["Venue"] ?? [];
 
   const teamFields: FieldDef[] = [
-    { key: "team_name", label: "Team Name", type: "text" },
+    {
+      key: "team_name", 
+      label: "Team Name", 
+      type: "link", 
+      linkOptions: {
+        baseUrl: "/teams/rosters", // Link to the rosters page for this league
+        params: { sport_id: String(sport_id), league_id: String(league_id), team_id: "team_id" }
+
+      }
+    },
     { key: "short_name", label: "Short Team Name", type: "text" },
     { key: "abbreviation", label: "Abbreviation", type: "text" },
     {
@@ -68,17 +78,17 @@ export function TeamsTable({ league, referenceData, selectedTeam, onSelectTeam }
     { key: "primary_color", label: "Primary Color", type: "text" },
     { key: "secondary_color", label: "Secondary Color", type: "text" },
     { key: "logo_url", label: "Logo URL", type: "text" },
-    { key: "founded_year", label: "Founded Year", type: "number"},
+    { key: "founded_year", label: "Founded Year", type: "number" },
     {
       key: "is_active",
       label: "Is Active",
       type: "boolean",
       defaultValue: 1,
     },
-    { key: "league_id", label: "League", type: "number", visible: false, defaultValue: league_id}
+    { key: "league_id", label: "League", type: "number", visible: false, defaultValue: league_id }
   ];
 
-return (
+  return (
     <BaseDataTable
       title="Teams"
       caption="A list of all sports in the system"
@@ -96,6 +106,6 @@ return (
       ]}
       selectedId={selectedTeam?.team_id}
       onSelect={onSelectTeam}
-   />
+    />
   );
 }

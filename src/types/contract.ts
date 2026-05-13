@@ -23,18 +23,3 @@ export interface Contract {
   end_season: Season;
   contract_type: ReferenceValue;
 }
-
-// export interface ContractCreate {
-//   athlete_id: number;
-//   team_id: number;
-//   start_season_id: number;
-//   end_season_id: number;
-//   signed_date?: string;
-//   total_value?: number;
-//   guaranteed_amount?: number;
-//   contract_type?: string;
-//   is_active?: boolean;
-//   details?: Record<string, any>;
-// }
-
-// export interface ContractUpdate extends Partial<ContractCreate> {}

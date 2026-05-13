@@ -21,7 +21,15 @@ export function LeaguesTable({ sport, referenceData, selectedLeague, onSelectLea
     const countries = referenceData?.["Country"] ?? [];
 
     const leagueFields: FieldDef[] = [
-        { key: "league_name", label: "Name", type: "text" },
+        {
+            key: "league_name",
+            label: "Name",
+            type: "link",
+            linkOptions: {
+                baseUrl: "/teams/rosters", // Link to the rosters page for this league
+                params: { sport_id: "sport_id", league_id: "league_id" } // Pulls 'sport_id' and 'league_id' from the current row data
+            }
+        },
         { key: "level", label: "Level", type: "number", defaultValue: 1 },
         {
             key: "country_id",

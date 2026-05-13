@@ -1,8 +1,7 @@
 "use client";
 
-import { queryAthletesBySport } from "@/hooks/queryAthletes";
+import { queryAthletesBySport, resourcesAthletes } from "@/hooks/queryAthletes";
 import { querySports } from "@/hooks/querySports";
-import { resources } from "@/lib/resources";
 import { BaseDataTable } from "../BaseDataTable";
 import { FieldDef } from "../../molecules/FieldDef";
 import { Sport } from "@/types/sport"
@@ -64,11 +63,11 @@ export function AthletesTable({ sport, referenceData, selectedAthlete, onSelectA
       caption="A list of all sports in the system"
       items={athletes}
       isLoading={isLoading} // Assuming sports are passed in as props, loading handled by parent
-      idField={resources.athletes.idField}
+      idField={resourcesAthletes.idField}
       idPlaceholder="hide"
-      endpoint={resources.athletes.endpoint}
+      endpoint={resourcesAthletes.endpoint}
       onRefresh={refetch}
-      invalidateKey={resources.athletes.bySport(sport_id).key}
+      invalidateKey={resourcesAthletes.bySport(sport_id).key}
       addLabel="Athlete"
       fields={athleteFields}
       defaultSort={[

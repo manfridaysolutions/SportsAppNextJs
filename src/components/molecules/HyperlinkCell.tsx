@@ -28,7 +28,14 @@ export function HyperlinkCell<T extends Record<string, any>>({
   const queryParams = new URLSearchParams();
   if (params) {
     Object.entries(params).forEach(([urlKey, dataKey]) => {
-      const dataValue = item[dataKey];
+      // 1. Try to get value from the item (e.g., item["team_id"])
+      let dataValue = item[dataKey];
+
+      // 2. If no value found on item, treat dataKey as the literal value (e.g., "2")
+      if (dataValue === undefined || dataValue === null) {
+        dataValue = dataKey;
+      }
+
       if (dataValue !== undefined && dataValue !== null) {
         queryParams.append(urlKey, dataValue.toString());
       }

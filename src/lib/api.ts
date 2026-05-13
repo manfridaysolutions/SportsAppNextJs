@@ -1,6 +1,7 @@
 import { ReferenceCategory } from "@/types/referencecategory";
 
 export const API_URL = process.env.NEXT_PUBLIC_API_URL;
+export const BASE_URL = "/api/v1";
 
 export async function apiGet<T>(path: string): Promise<T> {
   const res = await fetch(`${API_URL}${path}`, {

@@ -1,32 +1,6 @@
 const BASE_URL = "/api/v1";
 
 export const resources = {
-  athletes: {
-    idField: 'athlete_id',
-    key: ['athletes'] as const,
-    endpoint: `${BASE_URL}/athlete/`,
-    bySport: (sport_id: number | null) => ({
-      key: ['athlete', 'sport', sport_id] as const,
-      endpoint: `${BASE_URL}/athlete/by-sport/?sport_id=${sport_id}`,
-    }),
-    byRoster: (season_id: number | null, team_id: number | null) => ({
-      key: ['athlete', 'season', season_id, 'team', team_id] as const,
-      endpoint: `${BASE_URL}/athlete/by-roster/?season_id=${season_id}&team_id=${team_id}`,
-    }),
-  },
-  contracts: {
-    idField: 'contract_id',
-    key: ['contracts'] as const,
-    endpoint: `${BASE_URL}/contract/`,
-    byAthlete: (athlete_id: number |  null) => ({
-      key: ['contract','athlete', athlete_id] as const,
-      endpoint: `${BASE_URL}/contract/?athlete_id=${athlete_id}`,
-    }),
-    byTeam: (team_id: number |  null) => ({
-      key: ['contract','team', team_id] as const,
-      endpoint: `${BASE_URL}/contract/?team_id=${team_id}`,
-    })
-  },
   leagues: {
     idField: 'league_id',
     key: ['leagues'] as const,
@@ -74,16 +48,6 @@ export const resources = {
     byCategory: (reference_category_id: number | null) => ({
       key: ['referenceValue', 'referenceCategory', reference_category_id] as const,
       endpoint: `${BASE_URL}/reference-values/?reference_category_id=${reference_category_id}`,
-    }),
-  },
-  rosters: {
-    idField: 'roster_id',
-    key: ['rosters'] as const,
-    endpoint: `${BASE_URL}/roster/`,
-    // Identity and Location for the roster filtered by season and team
-    bySeasonAndTeam: (season_id: number | null, team_id: number | null) => ({
-      key: ['roster', 'season', season_id, 'team', team_id] as const,
-      endpoint: `${BASE_URL}/roster/?season_id=${season_id}&team_id=${team_id}`,
     }),
   },
   seasons: {

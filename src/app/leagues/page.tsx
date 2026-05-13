@@ -63,24 +63,25 @@ export default function LeaguesPage() {
           onSelect={handleSportChange}
         />
 
-        <LeaguesTable
-          referenceData={referenceData}
-          sport={sport ?? null}
-          onSelectLeague={setSelectedLeague}
-          selectedLeague={selectedLeague}
-        />
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-
-          <TeamsTable
-            league={selectedLeague}
+          <LeaguesTable
             referenceData={referenceData}
+            sport={sport ?? null}
+            onSelectLeague={setSelectedLeague}
+            selectedLeague={selectedLeague}
           />
+
 
           <SeasonsTable
             league={selectedLeague}
           />
         </div>
+
+        <TeamsTable
+          league={selectedLeague}
+          referenceData={referenceData}
+        />
+
       </div>
     </QuerystringValidator>
   );

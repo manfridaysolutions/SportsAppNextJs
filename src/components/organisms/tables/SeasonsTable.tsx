@@ -40,6 +40,7 @@ return (
       invalidateKey={resources.seasons.byLeague(league_id).key}
       addLabel="Season"
       fields={seasonFields}
+      itemsPerPage={5}
       defaultSort={[
         { key: "season_year", order: "desc" }
       ]}

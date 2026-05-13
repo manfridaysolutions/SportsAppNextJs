@@ -8,19 +8,12 @@ import { queryLeaguesDetail } from "@/hooks/queryLeagues";
 import { queryReferenceValuesForCategories } from "@/hooks/queryReferences";
 import { queryTeams } from "@/hooks/queryTeams";
 
-import { TeamsTable, REF_REQUIREMENTS_TEAMS } from "@/components/organisms/tables/TeamsTable";
-import { ContractsTable, REF_REQUIREMENTS_CONTRACTS } from "@/components/organisms/tables/ContractsTable";
 import { RostersTable } from "@/components/organisms/tables/RostersTable";
 import { SportsSelector } from "@/components/organisms/selectors/SportsSelector";
 import { LeaguesSelector } from "@/components/organisms/selectors/LeaguesSelector";
 import { TeamsSelector } from "@/components/organisms/selectors/TeamsSelector";
 import { SeasonsSelector } from "@/components/organisms/selectors/SeasonsSelector";
 import { QuerystringValidator } from "@/components/molecules/QuerystringValidator";
-
-const DYNAMIC_REF_KEYS = Array.from(new Set([
-  ...REF_REQUIREMENTS_TEAMS,
-  ...REF_REQUIREMENTS_CONTRACTS
-]));
 
 export default function TeamsPage() {
   const router = useRouter();
@@ -33,11 +26,10 @@ export default function TeamsPage() {
   const season_id = searchParams.get("season_id") ? Number(searchParams.get("season_id")) : null;
 
   // 2. Data Fetching
-  const { data: sports, isLoading: isInitialLoading } = querySports(); // Check global loading
+  const { data: sports, isLoading: isLoadingSports } = querySports(); // Check global loading
   const { data: league, isLoading: isLoadingLeague } = queryLeaguesDetail(league_id);
   const { data: teams = [], isLoading: isLoadingTeams } = queryTeams(league_id);
   const { data: seasons = [], isLoading: isLoadingSeasons } = querySeasons(league_id);
-  const { data: referenceData = {}, isLoading: isLoadingRef } = queryReferenceValuesForCategories(DYNAMIC_REF_KEYS);
 
   // 3. Derived State (finding objects based on URL IDs)
   const selectedSport = useMemo(() =>
@@ -71,7 +63,7 @@ export default function TeamsPage() {
     router.push(`?${params.toString()}`);
   };
 
-  const isSyncing = isLoadingTeams || isLoadingSeasons || isLoadingRef;
+  const isSyncing = isLoadingTeams || isLoadingSeasons || isLoadingSports;
 
   return (
     <QuerystringValidator
@@ -104,42 +96,30 @@ export default function TeamsPage() {
                   onSelect={(l) => router.push(`/teams?league_id=${l.league_id}&sport_id=${selectedSport?.sport_id}`)}
                 />
               </td>
+              <td>
+                <TeamsSelector
+                  league={league}
+                  selectedTeam={selectedTeam}
+                  onSelect={(t) => handleUpdateQuery("team_id", t.team_id)}
+                />
+              </td>
+              <td>
+                <SeasonsSelector
+                  league={league}
+                  selectedSeason={selectedSeason}
+                  onSelect={(s) => handleUpdateQuery("season_id", s.season_id)}
+                />
+              </td>
             </tr>
           </tbody>
         </table>
 
-        <TeamsTable
-          league={league!}
-          referenceData={referenceData}
-          onSelectTeam={(t) => handleUpdateQuery("team_id", t.team_id)}
-          selectedTeam={selectedTeam}
-        />
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-          <ContractsTable
+        <div className="space-y-6">
+          <RostersTable
+            league={league}
+            season={selectedSeason}
             team={selectedTeam}
-            referenceData={referenceData}
           />
-
-          <div className="space-y-6">
-            <div className="flex gap-4">
-              <TeamsSelector
-                league={league}
-                selectedTeam={selectedTeam}
-                onSelect={(t) => handleUpdateQuery("team_id", t.team_id)}
-              />
-              <SeasonsSelector
-                league={league}
-                selectedSeason={selectedSeason}
-                onSelect={(s) => handleUpdateQuery("season_id", s.season_id)}
-              />
-            </div>
-
-            <RostersTable
-              season={selectedSeason}
-              team={selectedTeam}
-            />
-          </div>
         </div>
       </div>
     </QuerystringValidator>
