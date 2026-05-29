@@ -119,6 +119,15 @@ export function CreateRow({
               />
             )}
 
+            {field.editable !== false && field.type === "link" && (
+                <Input
+                    type="url"
+                    className="h-8 text-xs"
+                    value={form[field.key]}
+                    onChange={(e) => update(field.key, e.target.value)}
+                />
+            )}
+
             {field.editable !== false && field.type === "number" && (
               <Input
                 className="h-8 text-xs"

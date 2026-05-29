@@ -214,7 +214,7 @@ export function EditableRow<T extends Record<string, any>>({
 
                 return (
                   <Input
-                    type={field.type}
+                    type={field.type === "link" ? "url" : field.type}
                     className="h-8"
                     defaultValue={merged[field.key]}
                     onChange={(e) =>
