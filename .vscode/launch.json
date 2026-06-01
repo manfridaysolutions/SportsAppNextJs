@@ -2,27 +2,20 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Next.js: Browser (Client)",
-      "type": "chrome",
-      "request": "launch",
-      "url": "http://localhost:3000",
-      "webRoot": "${workspaceFolder}"
-    },
-    {
-      "name": "Next.js: Server (Node)",
       "type": "node",
       "request": "launch",
+      "name": "Next.js: Full Stack",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
-      "skipFiles": ["<node_internals>/**"]
-    }
-  ],
-  "compounds": [
-    {
-      "name": "Next.js: Full Stack",
-      "configurations": ["Next.js: Server (Node)", "Next.js: Browser (Client)"]
+      "internalConsoleOptions": "neverOpen",
+      "outFiles": [
+        "${workspaceFolder}/.next/server/**/*.js"
+      ],
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
     }
   ]
 }
